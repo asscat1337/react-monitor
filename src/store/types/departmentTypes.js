@@ -1,0 +1,6 @@
+const GET_DEPARTMENT = 'GET_DEPARTMENT'
+
+
+export {
+    GET_DEPARTMENT
+}
