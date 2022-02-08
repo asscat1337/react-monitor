@@ -16,17 +16,27 @@ const Vaccine = sequelize.define('vaccine',{
     },
     last_date:{
         type:DataTypes.DATEONLY,
-        allowNull:false
     },
+    expired:{
+        type:DataTypes.DATEONLY,
+    },
+    isVaccined:{
+        type:DataTypes.BOOLEAN,
+    },
+    userId:{
+        type:DataTypes.INTEGER,
+        reference:{
+            model:Dashboard,
+            key:'dashboard_id'
+        }
+    }
 },{
     timestamps:false,
     freezeTableName:true
 })
-
-// Vaccine.associate=models=>{
-
-    //Vaccine.hasOne(Dashboard,{foreignKey:'dashboard_id',sourceKey:'userId',constraints:false})
-// }
+Dashboard.associate=models=>{
+    Dashboard.hasMany(models.Vaccine,{foreignKey:'dashboard_id',sourceKey:'vaccine_id',constraints:false})
+}
 
 
 module.exports = Vaccine

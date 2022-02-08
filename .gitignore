@@ -3,8 +3,9 @@
 # dependencies
 /node_modules
 .env
-/backend/.env
-/backend/node_modules
+backend/.env
+backend/node_modules
+backend/pdf2json
 /.pnp
 .pnp.js
 

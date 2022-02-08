@@ -1,13 +1,17 @@
-import React from 'react'
-import {DataGrid} from "@mui/x-data-grid";
+import React, {useState} from 'react'
+import {DataGrid,ruRU} from "@mui/x-data-grid";
 import {Button} from "@mui/material";
 import {useSelector,useDispatch} from "react-redux";
-import {actionGetNotVaccined} from "../../../store/actions/actionDashboard";
-import generateColumn from "../../../helpers/transform-table";
+import {actionGetCurrentUserInfo} from "../../../store/actions/actionDashboard";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import Search from "../../Search/Search";
+import escapeRegExp from "../../../helpers/escapeRegExp";
 
 
 
-function NotVaccineDataGrid({rows = [],rowsCount,size,page,setOpen,setCurrentId}){
+
+function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setModalValue,onChangePage}){
+    const [searchText,setSearchText] = useState('')
     const dispatch = useDispatch()
 
     const loading = useSelector(state=>state.dashboard.loading)
@@ -16,6 +20,16 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,page,setOpen,setCurrentId}
         event.stopPropagation()
         setOpen(true)
         setCurrentId(data.id)
+        setModalValue('add')
+    }
+
+    const onClickInfo=(event,params)=>{
+        console.log(params)
+        event.stopPropagation()
+        setOpen(true)
+        setModalValue('info')
+        dispatch(actionGetCurrentUserInfo(params.row))
+
     }
 
     const columns = [
@@ -27,37 +41,56 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,page,setOpen,setCurrentId}
             field:'action',
             headerName:'actions',
             sortable:false,
-            width:200,
+            width:250,
             disableClickEventBubbling:true,
             renderCell:(params)=>{
                 return (
-                    <Button onClick={(event)=>onClickData(event,params)}>
-                        Добавить вакцину
-                    </Button>
+                    <>
+                        <Button onClick={(event)=>onClickData(event,params)}>
+                            Добавить вакцину
+                        </Button>
+                        <Button
+                            aria-label="Иформация"
+                            onClick={(event)=>onClickInfo(event,params)}
+                            endIcon={
+                                <InfoOutlinedIcon/>
+                            }
+                        />
+                    </>
                 )
             }}
     ]
 
-    React.useEffect(()=>{
-        console.log(page)
-    },[page])
-
     const onChangePageSize=(data)=>{
         console.log(data)
     }
-    const onChangePage=page=>{
-        dispatch(actionGetNotVaccined(page,size))
-    }
+
+    const requestSearch=React.useMemo(()=>{
+        const searchRegex = new RegExp(escapeRegExp(searchText),'i')
+        return rows.filter(row=>Object.keys(row).some(field=> {
+            return searchRegex.test(row[field].toString())
+        })
+        )
+    },[searchText,rows])
 
     return (
-        <div style={{height:300,width:'100%'}}>
+        <div style={{height:500,width:'100%'}}>
             <DataGrid
+                localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+                // components={{Toolbar:Search}}
+                // componentsProps={{
+                //     toolbar:{
+                //         value:searchText,
+                //         onChange:(event)=>setSearchText(event.target.value),
+                //         clearSearch:()=>requestSearch('')
+                //     }
+                // }}
                 rowCount={rowsCount}
                 pageSize={size}
                 onPageSizeChange={(newPage)=>onChangePageSize(newPage)}
                 onPageChange={(page)=>onChangePage(page)}
                 paginationMode="server"
-                rows={rows}
+                rows={requestSearch}
                 columns={columns}
                 pagination
                 loading = {loading}

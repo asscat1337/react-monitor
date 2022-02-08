@@ -1,19 +1,71 @@
+import React from 'react'
 import Header from './components/Header/Header'
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Add from './pages/Add/Add'
-import {Routes,Route} from 'react-router-dom'
+import {Routes,Route,useLocation} from 'react-router-dom'
+import PrivateRouter from "./components/router/PrivateRouter";
 import Login from "./pages/Login/Login";
+import NotFound from "./pages/NotFound/NotFound";
+import {ThemeProvider,createTheme} from "@mui/material";
+import Context from "./components/context/context";
+
 
 function App() {
+    const location = useLocation()
+    const [mode,setMode] = React.useState(localStorage.getItem('theme'))
+    const theme  = createTheme({
+        palette:{
+            mode
+        }
+    })
+
+    const [openSnackBar,setOpenSnackBar] = React.useState(false)
+
+
+    const onOpenSnackBar=()=>{
+        setOpenSnackBar(true)
+    }
+
+    const onCloseSnackBar=()=>{
+        setOpenSnackBar(false)
+    }
+
+    React.useEffect(()=>{
+        if(!localStorage.getItem('theme')){
+            localStorage.setItem('theme','light')
+        }
+    },[])
+
+    const onChangeTheme = ()=>{
+        setMode(prev=>prev === 'light' ? 'dark' : 'light')
+        localStorage.setItem('theme',mode === 'light' ? 'dark':'light')
+    }
+
+
   return (
-    <div className="App">
-        <Header/>
-        <Routes>
-            <Route path="/dashboard" element={<Dashboard/>}/>
-            <Route path="/add" element={<Add/>}/>
-            <Route path="/login" element={<Login/>}/>
-        </Routes>
-    </div>
+      <ThemeProvider theme={theme}>
+          <Context.Provider value={{onCloseSnackBar,onOpenSnackBar,openSnackBar}}>
+              <div className="App">
+                  {!location.pathname.includes('login') &&
+                  <Header
+                      onChange={onChangeTheme}
+                      checked={mode}
+                  />
+                  }
+                  <Routes>
+                      <Route path="/dashboard" element={
+                          <PrivateRouter component={Dashboard}/>
+                      }/>
+                      <Route path="/add" element={
+                          <PrivateRouter component={Add}/>
+                      }/>
+                      <Route path="/login" element={<Login/>}/>
+                      <Route path="*" element={<NotFound/>}/>
+                  </Routes>
+              </div>
+          </Context.Provider>
+
+      </ThemeProvider>
   );
 }
 

@@ -21,11 +21,6 @@ function VaccineDataGrid({data,setOpen,setCurrentId,setModalValue}){
         setModalValue('info')
         dispatch(actionGetCurrentUserInfo(params.id))
     }
-    // React.useEffect(()=>{
-    //     return apiRef.current.subscribeEvent((params)=>{
-    //         console.log(params)
-    //     })
-    // },[])
 
     const transformedColumn = [...columns,{
         field:'action',

@@ -1,0 +1,8 @@
+const AUTH_LOGIN = 'AUTH_LOGIN';
+const LOGOUT_USER = 'LOGOUT_USER'
+
+
+export {
+    AUTH_LOGIN,
+    LOGOUT_USER
+}

@@ -15,12 +15,12 @@ const Dashboard = sequelize.define('dashboard',{
         type:DataTypes.TEXT,
         allowNull:false
     },
-    position:{
+    snils:{
         type:DataTypes.TEXT,
         allowNull:false
     },
-    isVaccined:{
-        type:DataTypes.BOOLEAN,
+    position:{
+        type:DataTypes.TEXT,
         allowNull:false
     },
     departmentId:{
@@ -30,19 +30,26 @@ const Dashboard = sequelize.define('dashboard',{
             model:Department,
             key:'department_id'
         }
+    },
+    isVaccined:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false
+    },
+    isFirstComponent:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false
+    },
+    status:{
+        type:DataTypes.TEXT,
+        allowNull:false
     }
 },{
     freezeTableName:true,
     timestamps:false
 })
 
-
-
-// Dashboard.associate=models=>{
-    Dashboard.hasOne(Department,{foreignKey:'department_id',sourceKey:'departmentId',constraints:false})
-    Dashboard.hasOne(Vaccine,{foreignKey:{name:'dashboard_id',type:DataTypes.INTEGER,allowNull:false}})
-    Dashboard.belongsTo(Vaccine,{foreignKey:'dashboard_id',constraints:false})
-// }
+     Dashboard.hasOne(Department,{foreignKey:'department_id',sourceKey:'departmentId',constraints:false})
+      Vaccine.belongsTo(Dashboard,{foreignKey:'userId',sourceKey:'vaccine_id',constraints:false})
 
 
 
