@@ -1,91 +1,120 @@
-import {Button,Box,Container} from "@mui/material";
+import {Button,Container,Portal} from "@mui/material";
 import {useDispatch,useSelector} from "react-redux";
 import {useForm,Controller} from 'react-hook-form'
 import * as yup from 'yup'
 import {yupResolver} from "@hookform/resolvers/yup";
 import CustomDatePicker from "../../DatePicker/CustomDatePicker";
-import {actionAddVaccine, actionFinalComponent, actionFirstComponent} from "../../../store/actions/actionDashboard";
+import {actionFinalComponent, actionFirstComponent} from "../../../store/actions/actionDashboard";
+import CustomSnackBar from "../../SnackBar/CustomSnackBar";
+import Context from "../../context/context";
+import React from "react";
 
 
-function FormVaccine({currentId}){
+function FormVaccine({currentId}) {
+
+    const {onOpenSnackBar} = React.useContext(Context)
 
     const dispatch = useDispatch()
-    const findUser = useSelector(state=>state.dashboard.notVaccine?.find(user=>user.id === currentId))
-
-    console.log(currentId)
-        const schema = yup.object().shape({
-            first_date:yup.date(),
-            last_date:yup.date()
-        })
-    const {control,getValues} = useForm({
-        resolver:yupResolver(schema)
+    const findUser = useSelector(state => {
+        const notVaccine = state.dashboard.notVaccine.find(user => user.id === currentId)
+        if (notVaccine === undefined) {
+            return state.dashboard.data.find(user => user.id === currentId)
+        }
+        return notVaccine
     })
 
-    const onClickFirstDate = (event)=>{
+    const message = useSelector(state => state.dashboard.message)
+
+
+    const schema = yup.object().shape({
+        first_date: yup.date(),
+        last_date: yup.date()
+    })
+    const {control, getValues} = useForm({
+        resolver: yupResolver(schema)
+    })
+
+    const onClickFirstDate = (event) => {
         event.preventDefault()
         const obj = {
-            first_date:getValues("first_date"),
-            currentId
+            first_date: getValues("first_date"),
+            currentId,
+            vaccineId: findUser?.vaccine?.vaccine_id
         }
 
         dispatch(actionFirstComponent(obj))
-    }
-    const onClickSecondDate=(event)=>{
-        const firstDate = getValues("first_date")
-        const lastDate = getValues("last_date")
 
-        console.log(firstDate,lastDate)
-        // event.preventDefault()
-        // const finalObj = {
-        //     last_date:getValues('last_date'),
-        //     currentId
-        // }
-        // dispatch(actionFinalComponent(finalObj))
+        onOpenSnackBar()
     }
+    const onClickSecondDate = (event) => {
+        event.preventDefault()
+        const finalObj = {
+            last_date: getValues('last_date'),
+            currentId,
+            first_date: findUser?.vaccine?.first_date,
+            vaccineId: findUser?.vaccine?.vaccine_id
+        }
+
+
+        dispatch(actionFinalComponent(finalObj))
+
+        onOpenSnackBar()
+    }
+
+
     return (
-        <Container>
-            {findUser?.isFirstComponent === 0 && (
-                <>
-                    <h5>Дата первой вакцины</h5>
-            <Controller
-                control={control}
-                name="first_date"
-                render={({field:{onChange,value}})=>(
-                    <CustomDatePicker
-                        value={value}
-                        onChange={onChange}
-                    />
+        <>
+            <Container>
+                {message && (
+                    <Portal>
+                        <CustomSnackBar
+                            message={message}
+                        />
+                    </Portal>
                 )}
-            />
-                <Button type="submit" onClick={onClickFirstDate}>
+                <h5>Дата первой вакцины</h5>
+                <Controller
+                    control={control}
+                    name="first_date"
+                    render={({field: {onChange, value}}) => (
+                        <CustomDatePicker
+                            value={value}
+                            onChange={onChange}
+                        />
+                    )}
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={findUser?.isFirstComponent === 1 ? true : false}
+                    onClick={onClickFirstDate}
+                >
                     Добавить первый компонент
                 </Button>
-                </>
-            )}
-            {findUser?.isFirstComponent === 1 && (
-                <>
-                    <h5>Дата второй вакцины</h5>
-                    <Controller
-                        control={control}
-                        name="last_date"
-                        render={({field:{onChange,value}})=>(
-                            <CustomDatePicker
-                                value={value}
-                                onChange={newValue=>onChange(newValue)}
-                            />
-                        )}
-                    />
-                    <Button type="submit" onClick={onClickSecondDate}>
-                        Добавить второй компонент
-                    </Button>
-                </>
-            )}
-
-
-        </Container>
+                {findUser?.isFirstComponent === 1 && (
+                    <>
+                        <h5>Дата второй вакцины</h5>
+                        <Controller
+                            control={control}
+                            name="last_date"
+                            render={({field: {onChange, value}}) => (
+                                <CustomDatePicker
+                                    value={value}
+                                    onChange={newValue => onChange(newValue)}
+                                />
+                            )}
+                        />
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            onClick={onClickSecondDate}>
+                            Добавить второй компонент
+                        </Button>
+                    </>
+                )}
+            </Container>
+        </>
     )
 }
-
-
 
 export default FormVaccine

@@ -12,30 +12,25 @@ const Vaccine = sequelize.define('vaccine',{
     },
     first_date:{
         type:DataTypes.DATEONLY,
-        allowNull:false
     },
     last_date:{
         type:DataTypes.DATEONLY,
     },
+    sick_date:{
+        type:DataTypes.DATEONLY
+    },
     expired:{
         type:DataTypes.DATEONLY,
     },
-    isVaccined:{
-        type:DataTypes.BOOLEAN,
-    },
-    userId:{
-        type:DataTypes.INTEGER,
-        reference:{
-            model:Dashboard,
-            key:'dashboard_id'
-        }
+    isVaccined: {
+        type: DataTypes.BOOLEAN,
     }
 },{
     timestamps:false,
     freezeTableName:true
 })
-Dashboard.associate=models=>{
-    Dashboard.hasMany(models.Vaccine,{foreignKey:'dashboard_id',sourceKey:'vaccine_id',constraints:false})
+Vaccine.associate=models=>{
+    Vaccine.belongsTo(models.Dashboard,{foreignKey:'vaccineId',constraints:false,onDelete:'cascade'})
 }
 
 

@@ -1,19 +1,13 @@
-import React, {useState} from 'react'
-import {DataGrid,ruRU} from "@mui/x-data-grid";
+import React from 'react'
+import {DataGrid, getGridStringOperators, ruRU} from "@mui/x-data-grid";
 import {Button} from "@mui/material";
-import {useSelector,useDispatch} from "react-redux";
-import {actionGetCurrentUserInfo} from "../../../store/actions/actionDashboard";
+import {useSelector} from "react-redux";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import Search from "../../Search/Search";
-import escapeRegExp from "../../../helpers/escapeRegExp";
 
 
 
 
-function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setModalValue,onChangePage}){
-    const [searchText,setSearchText] = useState('')
-    const dispatch = useDispatch()
-
+function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setModalValue,onChangePage,onFilterData}){
     const loading = useSelector(state=>state.dashboard.loading)
 
     const onClickData=(event,data)=>{
@@ -24,30 +18,48 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setMo
     }
 
     const onClickInfo=(event,params)=>{
-        console.log(params)
         event.stopPropagation()
         setOpen(true)
         setModalValue('info')
-        dispatch(actionGetCurrentUserInfo(params.row))
+        setCurrentId(params.id)
 
     }
 
+    const onClickSick=(event,params)=>{
+        event.stopPropagation()
+        setModalValue('sick')
+        setOpen(true)
+        setCurrentId(params.id)
+    }
+
+
+
     const columns = [
         { field: 'fio', headerName: 'ФИО',width:250},
-        { field: 'position', headerName: 'Должность',width: 150},
+        { field: 'position', headerName: 'Должность',width: 300},
         { field: 'isVaccined', headerName: 'Вакцинирован?',width: 150},
-        { field: 'department', headerName: 'Отделение',width: 200},
+        {
+            field: 'department',
+            headerName: 'Отделение',
+            width: 300,
+            filterOperators:getGridStringOperators().filter(
+                operator=>operator.value === 'contains'
+            )
+        },
         {
             field:'action',
-            headerName:'actions',
+            headerName:'Действия',
             sortable:false,
-            width:250,
+            width:450,
             disableClickEventBubbling:true,
             renderCell:(params)=>{
                 return (
                     <>
                         <Button onClick={(event)=>onClickData(event,params)}>
                             Добавить вакцину
+                        </Button>
+                        <Button onClick={(event)=>onClickSick(event,params)}>
+                            Добавить болезнь
                         </Button>
                         <Button
                             aria-label="Иформация"
@@ -61,40 +73,21 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setMo
             }}
     ]
 
-    const onChangePageSize=(data)=>{
-        console.log(data)
-    }
-
-    const requestSearch=React.useMemo(()=>{
-        const searchRegex = new RegExp(escapeRegExp(searchText),'i')
-        return rows.filter(row=>Object.keys(row).some(field=> {
-            return searchRegex.test(row[field].toString())
-        })
-        )
-    },[searchText,rows])
 
     return (
         <div style={{height:500,width:'100%'}}>
             <DataGrid
                 localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
-                // components={{Toolbar:Search}}
-                // componentsProps={{
-                //     toolbar:{
-                //         value:searchText,
-                //         onChange:(event)=>setSearchText(event.target.value),
-                //         clearSearch:()=>requestSearch('')
-                //     }
-                // }}
                 rowCount={rowsCount}
                 pageSize={size}
-                onPageSizeChange={(newPage)=>onChangePageSize(newPage)}
                 onPageChange={(page)=>onChangePage(page)}
                 paginationMode="server"
-                rows={requestSearch}
+                filterMode="server"
+                onFilterModelChange={onFilterData}
+                rows={rows}
                 columns={columns}
                 pagination
                 loading = {loading}
-                rowsPerPageOptions={[10,15,20]}
             />
         </div>
     )

@@ -15,12 +15,16 @@ function App() {
     const [mode,setMode] = React.useState(localStorage.getItem('theme'))
     const theme  = createTheme({
         palette:{
-            mode
+            mode:mode ?? "light"
         }
     })
 
+    React.useEffect(()=>{
+        if(!mode){
+            localStorage.setItem('theme','light')
+        }
+    },[mode])
     const [openSnackBar,setOpenSnackBar] = React.useState(false)
-
 
     const onOpenSnackBar=()=>{
         setOpenSnackBar(true)
@@ -29,13 +33,6 @@ function App() {
     const onCloseSnackBar=()=>{
         setOpenSnackBar(false)
     }
-
-    React.useEffect(()=>{
-        if(!localStorage.getItem('theme')){
-            localStorage.setItem('theme','light')
-        }
-    },[])
-
     const onChangeTheme = ()=>{
         setMode(prev=>prev === 'light' ? 'dark' : 'light')
         localStorage.setItem('theme',mode === 'light' ? 'dark':'light')
@@ -53,7 +50,7 @@ function App() {
                   />
                   }
                   <Routes>
-                      <Route path="/dashboard" element={
+                      <Route path="/" element={
                           <PrivateRouter component={Dashboard}/>
                       }/>
                       <Route path="/add" element={

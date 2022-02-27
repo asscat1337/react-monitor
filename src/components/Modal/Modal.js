@@ -1,5 +1,7 @@
 import React from 'react'
-import {Modal,Button,Box,Typography} from '@mui/material'
+import {Modal,Box} from '@mui/material'
+import {useDispatch} from "react-redux";
+import {actionClearMessage} from "../../store/actions/actionDashboard";
 
 const style = {
     position:'absolute',
@@ -15,10 +17,15 @@ const style = {
 
 function СustomModal({open,setOpen,children}){
 
-    const handleClose=()=>setOpen(false)
-    const handleOpen=()=>setOpen(true)
+    const dispatch = useDispatch()
+
+    const handleClose=()=>{
+        setOpen(false)
+        dispatch(actionClearMessage())
+    }
 
     return (
+        <>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -29,6 +36,7 @@ function СustomModal({open,setOpen,children}){
                     }
                 </Box>
             </Modal>
+        </>
     )
 }
 

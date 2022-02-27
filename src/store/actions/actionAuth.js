@@ -9,7 +9,7 @@ function actionLogin(data,navigate){
             .then(({data})=>{
                 dispatch(login(data))
                 localStorage.setItem('token',data.accessToken)
-                navigate('/dashboard')
+                navigate('/')
             })
             .catch(error=>console.log(error));
     }

@@ -6,7 +6,9 @@ const app = express()
 const path = require('path')
 const dashboard = require('./router/dashboardRouter')
 const auth = require('./router/authRouter')
+const analytics = require('./router/analyticsRouter')
 const FileLoad = require('./services/file-load')
+const dashboardService = require('./services/dashboard-service')
 const schedule = require('node-schedule')
 
 app.use(cookieParser())
@@ -16,10 +18,11 @@ app.use(cors())
 
 app.use('/dashboard',dashboard)
 app.use('/auth',auth)
+app.use('/analytics',analytics)
 
-// app.get("*",(req,res)=>{
-//     res.sendFile(path.resolve(__dirname,'../build','index.html'))
-// })
+app.get("*",(req,res)=>{
+    res.sendFile(path.resolve(__dirname,'../build','index.html'))
+})
 
 
 
@@ -33,6 +36,10 @@ const job = schedule.scheduleJob('0 2 * * 0',async ()=>{
         })
 
  })
+
+const job1 = schedule.scheduleJob('00 2 * * *',async()=>{
+    await dashboardService.updateUserWithExpires()
+})
 
 app.listen(process.env.PORT,()=>{
     console.log(`server started on ${process.env.PORT} port`)

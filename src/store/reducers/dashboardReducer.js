@@ -6,7 +6,7 @@ import {
     LOADING_DATA,
     GET_INFO,
     SEARCH_DATA,
-    ERROR_DASHBOARD
+    ERROR_DASHBOARD, SICK_DATE, FILTER_DATA, CLEAR_MESSAGE
 } from "../types/dashboardTypes";
 
 const initialState = {
@@ -38,32 +38,36 @@ function dashboardReducer(state = initialState,action){
         case ADD_VACCINE :
             return {
                 ...state,
-                 notVaccine: state.notVaccine.filter(current=>{
-                     if(action.payload.isVaccined === 1){
-                         return current.id !== action.payload.dashboard_id
+                 notVaccine: state.notVaccine?.filter(current=>{
+                     if(action.payload.data.isVaccined === 1){
+                         return current.id !== action.payload.data.dashboard_id
                      }else {
                          return current
                      }
                  })
                      .map(item=>{
-                     if(item.id === action.payload.dashboard_id){
+                     if(item.id === action.payload.data.dashboard_id){
                          return {
                              ...item,
-                             isFirstComponent:action.payload.isFirstComponent,
+                             isFirstComponent:action.payload.data.isFirstComponent,
+                             isVaccined:Number(action.payload.data.isVaccined),
+                             vaccine:action.payload.data.vaccine
                          }
                      }
                      return item
                  }),
                 data: state.data.map(item=>{
-                    if(item.id === action.payload.dashboard_id){
+                    if(item.id === action.payload.data.dashboard_id){
                         return {
                             ...item,
-                            isFirstComponent:action.payload.isFirstComponent,
-                            isVaccined:action.payload.isVaccined
+                            isFirstComponent:action.payload.data.isFirstComponent,
+                            isVaccined:Number(action.payload.data.isVaccined),
+                            vaccine:action.payload.data.vaccine
                         }
                     }
                     return item
-                })
+                }),
+               message:action.payload.message
             }
         case GET_NOT_VACCINED :
             return {
@@ -90,10 +94,42 @@ function dashboardReducer(state = initialState,action){
                 data:action.payload
             }
         }
+        case FILTER_DATA :
+            return  {
+                ...state,
+                data:action.payload
+        }
         case ERROR_DASHBOARD :
             return {
                 ...state,
                 message:action.payload
+            }
+        case SICK_DATE :
+            return {
+                ...state,
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.data.dashboard_id){
+                        return {
+                            ...item,
+                            isSick:action.payload.data.isSick,
+                            isVaccined:action.payload.data.isVaccined,
+                            vaccine:action.payload.data.vaccine
+                        }
+                    }
+                    return item
+                }),
+                notVaccine: state.notVaccine?.filter(item=>item.id !== action.payload.data.dashboard_id),
+                message:action.payload.message
+            }
+        case CLEAR_MESSAGE :
+            return {
+                ...state,
+                message:''
+            }
+        case ERROR_DASHBOARD :
+            return {
+                ...state,
+                message:action.payload.message
             }
         default:
             return state
@@ -108,5 +144,8 @@ export const loadingData=()=>({type:LOADING_DATA})
 export const getInfo=(payload)=>({type:GET_INFO,payload})
 export const search=(payload)=>({type:SEARCH_DATA,payload})
 export const errorData=(payload)=>({type:ERROR_DASHBOARD,payload})
+export const sickDate=(payload)=>({type:SICK_DATE,payload})
+export const filterData=(payload)=>({type:FILTER_DATA,payload})
+export const clearMessage=()=>({type:CLEAR_MESSAGE})
 
 export default dashboardReducer

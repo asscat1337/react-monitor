@@ -6,6 +6,7 @@ import {composeWithDevTools} from "redux-devtools-extension";
 import dashboardReducer from './reducers/dashboardReducer'
 import DepartmentReducer from "./reducers/departmentReducer";
 import authReducer from "./reducers/authReducer";
+import analyticReducer from "./reducers/analyticReducer";
 
 const persistConfig= {
     key:'root',
@@ -15,7 +16,8 @@ const persistConfig= {
 const rootReducer = combineReducers({
     dashboard:dashboardReducer,
     department:DepartmentReducer,
-    auth:authReducer
+    auth:authReducer,
+    analytic:analyticReducer
 })
 
 const persistedReducer = persistReducer(persistConfig,rootReducer)

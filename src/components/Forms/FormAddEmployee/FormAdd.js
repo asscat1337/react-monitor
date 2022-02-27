@@ -82,7 +82,7 @@ function FormAdd({options}){
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="items"
+                                    label="Отделение"
                                     margin="normal"
                                     variant="outlined"
                                     required

@@ -15,6 +15,10 @@ const Dashboard = sequelize.define('dashboard',{
         type:DataTypes.TEXT,
         allowNull:false
     },
+    birthday:{
+        type:DataTypes.DATEONLY,
+        // allowNull:false
+    },
     snils:{
         type:DataTypes.TEXT,
         allowNull:false
@@ -39,6 +43,16 @@ const Dashboard = sequelize.define('dashboard',{
         type:DataTypes.BOOLEAN,
         allowNull:false
     },
+    isSick:{
+        type:DataTypes.BOOLEAN,
+    },
+    vaccineId:{
+        type:DataTypes.INTEGER,
+        references: {
+            model:Vaccine,
+            key:'vaccine_id'
+        }
+    },
     status:{
         type:DataTypes.TEXT,
         allowNull:false
@@ -48,8 +62,8 @@ const Dashboard = sequelize.define('dashboard',{
     timestamps:false
 })
 
-     Dashboard.hasOne(Department,{foreignKey:'department_id',sourceKey:'departmentId',constraints:false})
-      Vaccine.belongsTo(Dashboard,{foreignKey:'userId',sourceKey:'vaccine_id',constraints:false})
+      Dashboard.hasOne(Department,{foreignKey:'department_id',sourceKey:'departmentId',constraints:false})
+      Dashboard.hasOne(Vaccine,{foreignKey:'vaccine_id',sourceKey:'vaccineId',constraints:false})
 
 
 

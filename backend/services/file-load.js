@@ -4,8 +4,14 @@ const jsdom = require('jsdom')
 const {JSDOM} = jsdom
 const Department = require('../models/Department')
 const Dashboard = require('../models/Dashboard')
+const Vaccine = require('../models/Vaccine')
+const util = require('util')
+const dayjs = require('dayjs')
 
 class FileLoad{
+    constructor() {
+        this.addDataFromVaccine = this.addDataFromVaccine.bind(this)
+    }
    async loadFromPDF(){
         try {
             const findDepartment = await Department.findAll({
@@ -24,12 +30,15 @@ class FileLoad{
                             fio:tr[1].textContent,
                             departmentId:findDepartmentId.department_id,
                             position:tr[2].textContent,
-                            birthday:tr[3].textContent,
+                            birthday:tr[3].textContent.split('.').reverse().join('-'),
                             snils:tr[4].textContent,
-                            status:tr[5].textContent
+                            status:tr[5].textContent,
+                            isSick:0,
+                            isFirstComponent:0,
+                            isVaccined:0
                         })
                     })
-            return results
+            return results.slice(1)
         }
         catch(e){
             console.log(e)
@@ -56,8 +65,9 @@ class FileLoad{
    async updateStatus(data){
        try{
            const {snils,status} = data
-
            const getUser = await this.findCurrentUser(snils)
+
+           if(getUser === null) return
 
            if(getUser.status !== status){
                await Dashboard.update({status},{
@@ -73,18 +83,12 @@ class FileLoad{
     }
     async addNewEmployee(data){
        try {
-           const {snils, position, birthday, status, fio, departmentId} = data
+           const {snils} = data
 
            const getUser = await this.findCurrentUser(snils)
-
            if (getUser === null) {
                await Dashboard.create({
-                   fio,
-                   snils,
-                   position,
-                   birthday,
-                   status,
-                   departmentId
+                 ...data
                })
            }
        }catch(e){
@@ -94,8 +98,50 @@ class FileLoad{
 
    async callAction(newData){
        for await (const data of newData){
-           this.updateStatus(data)
-           this.addNewEmployee(data)
+           await this.updateStatus(data)
+            await this.addNewEmployee(data)
+       }
+    }
+
+    async parseFromJson(){
+       try{
+           const readFile = util.promisify(fs.readFile)
+
+           const data = await readFile(path.resolve('./pdf2json','test.json'),'utf-8')
+           return JSON.parse(data)
+       }catch(e){
+           console.log(e)
+       }
+    }
+
+    parseDate(data){
+        return data.split('.').reverse().join('-')
+    }
+
+    async addDataFromVaccine(data){
+       try{
+           const {snils,last_vaccine,first_vaccine} = data
+           if(first_vaccine !==null && last_vaccine !==null){
+               const findUser = await this.findCurrentUser(snils)
+               if(findUser){
+                  const createdVaccine =  await Vaccine.create({
+                       first_date:this.parseDate(first_vaccine),
+                       last_date:this.parseDate(last_vaccine),
+                       expired:dayjs(this.parseDate(last_vaccine)).add(6,'month').toDate(),
+                   })
+                   await Dashboard.update({
+                       isVaccined:1,
+                       isFirstComponent:1,
+                       vaccineId:createdVaccine.vaccine_id
+                   },{
+                       where:{
+                           dashboard_id:findUser.dashboard_id
+                       }
+                   })
+               }
+           }
+       }catch (e) {
+           console.log(e)
        }
     }
 }

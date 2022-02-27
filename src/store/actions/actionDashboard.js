@@ -6,7 +6,10 @@ import {
     loadingData,
     getInfo,
     search,
-    errorData
+    errorData,
+    filterData,
+    sickDate,
+    clearMessage
 } from "../reducers/dashboardReducer";
 import axios from "axios";
 import $api from "../../components/http/http";
@@ -43,7 +46,7 @@ function actionFinalComponent(data){
     return dispatch=>{
         axios.post(`${process.env.REACT_APP_BASE_URL}/dashboard/final-component`,data)
             .then(({data})=>dispatch(addVaccine(data)))
-            .catch(error=>console.log(error))
+            .catch(error=>dispatch(errorData(error.response.data.message)))
     }
 }
 
@@ -51,6 +54,14 @@ function  actionSearch(data){
     return dispatch=>{
         axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/search?query=${data}`)
             .then(({data})=>dispatch(search(data)))
+            .catch(error=>console.log(error))
+    }
+}
+
+ function actionSickDate(data){
+    return dispatch=>{
+        axios.post(`${process.env.REACT_APP_BASE_URL}/dashboard/sick-date`,data)
+            .then(({data})=>dispatch(sickDate(data)))
             .catch(error=>console.log(error))
     }
 }
@@ -64,7 +75,6 @@ function actionAddVaccine(newData){
 }
 
 function actionGetCurrentUserInfo(data){
-    console.log(data)
     return dispatch=>{
         axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/get-info?id=${data.id}`)
             .then(({data})=>dispatch(getInfo(data)))
@@ -74,10 +84,23 @@ function actionGetCurrentUserInfo(data){
 
 function actionGetNotVaccined(page,size){
     return dispatch=>{
+        console.log(page,size)
         dispatch(loadingData())
         axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/not-vaccined?page=${page}&size=${size}`)
             .then(({data})=>dispatch(getNotVaccined({page,size,...data})))
             .catch(error=>console.log(error))
+    }
+}
+
+function actionFilterData(filter){
+    return dispatch=>{
+        axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/filter?query=${filter}`)
+            .then(({data})=>dispatch(filterData(data)))
+    }
+}
+function actionClearMessage(){
+    return dispatch=>{
+        dispatch(clearMessage())
     }
 }
 
@@ -90,5 +113,8 @@ export {
     actionGetCurrentUserInfo,
     actionFirstComponent,
     actionFinalComponent,
-    actionSearch
+    actionSearch,
+    actionSickDate,
+    actionFilterData,
+    actionClearMessage
 }
