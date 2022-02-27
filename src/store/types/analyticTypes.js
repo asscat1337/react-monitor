@@ -1,0 +1,7 @@
+
+const DATA_ANALYTIC = 'DATA_ANALYTIC'
+
+
+export {
+    DATA_ANALYTIC
+}
