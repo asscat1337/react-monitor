@@ -196,7 +196,7 @@ class DashboardController {
 
             const expired = dayjs(last_date).add(6,'month').toDate()
 
-            if(dayjs(last_date).diff(first_date,'week') < 3){
+            if(dayjs(last_date).diff(first_date,'week') < 2){
                 return res.status(400).json({message:'Неверно выбрана дата второго компонента'})
             }
 
