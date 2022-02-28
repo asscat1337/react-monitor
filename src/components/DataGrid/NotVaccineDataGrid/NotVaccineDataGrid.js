@@ -37,7 +37,17 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setMo
     const columns = [
         { field: 'fio', headerName: 'ФИО',width:250},
         { field: 'position', headerName: 'Должность',width: 300},
-        { field: 'isVaccined', headerName: 'Вакцинирован?',width: 150},
+        { field: 'isVaccined',
+            headerName: 'Вакцинирован?',
+            width: 150,
+            renderCell:(params)=>{
+               return (
+                   <>
+                       {params.row.isVaccined === 1 ? "Да" : "Нет"}
+                   </>
+               )
+            }
+        },
         {
             field: 'department',
             headerName: 'Отделение',

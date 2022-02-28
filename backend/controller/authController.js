@@ -49,7 +49,7 @@ class AuthController{
                 fio,
                 login,
                 password:generatePassword,
-                last_sign:dayjs().format('DD-MM-YYYY'),
+                last_sign:dayjs().format('YYYY-MM-DD'),
                 role:1
             })
 

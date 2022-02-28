@@ -11,7 +11,6 @@ import FormAddSick from "../../components/Forms/FormAddSick/FormAddSick";
 import Search from "../../components/Search/Search";
 import useDebounce from "../../components/hooks/use-debounce";
 import Chart from "../../components/Chart/Chart";
-import CustomSnackBar from "../../components/SnackBar/CustomSnackBar";
 import {actionGetAnalytic} from "../../store/actions/actionAnalytic";
 
 
@@ -27,13 +26,14 @@ function Dashboard(){
     const dispatch = useDispatch()
     const page = useSelector(state=>state.dashboard.page)
     const size = useSelector(state=>state.dashboard.size)
-    const rowsCount = useSelector(state=>state.dashboard.rows)
+    const rowsCountAll = useSelector(state=>state.dashboard.rowsAll)
+    const rowsCountNotVaccine = useSelector(state=>state.dashboard.rowsNotVaccine)
     const rows = useSelector(state=>state.dashboard?.data)
     const notVaccine = useSelector(state=>state.dashboard?.notVaccine)
     const vaccined = useSelector(state=>state.analytic?.vaccine)
     const notVaccined = useSelector(state=>state.analytic?.notVaccine)
 
-
+    console.log(page,size)
 
     const findUser = [...notVaccine ?? [],...rows ?? []].filter(item=>{
         return item.id === currentId
@@ -157,7 +157,7 @@ function Dashboard(){
                         setModalValue={setModalValue}
                         setOpen={setOpen}
                         setCurrentId={setCurrentId}
-                        rowsCount={rowsCount}
+                        rowsCount={rowsCountAll}
                         onFilterData={onFilterData}
                         size={size}
                         page={page}
@@ -171,7 +171,7 @@ function Dashboard(){
                             rows={notVaccine}
                             setOpen={setOpen}
                             setCurrentId={setCurrentId}
-                            rowsCount={rowsCount}
+                            rowsCount={rowsCountNotVaccine}
                             size={10}
                             page={page}
                             onFilterData={onFilterData}

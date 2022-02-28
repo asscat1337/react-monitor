@@ -94,7 +94,7 @@ class DashboardController {
                     vaccine:item.vaccine
                 }
             })
-            return res.status(200).json({data:mappedData,rows:data.count})
+            return res.status(200).json({data:mappedData,rowsAll:data.count})
         }catch (e){
             console.log(e)
             return res.status(500).json(e)
@@ -254,25 +254,8 @@ class DashboardController {
                 raw:true,
                 nest:true
             })
-
-            // const getDataFromExpires = await Dashboard.findAndCountAll({
-            //     offset:Number(page)*Number(size),
-            //     limit:Number(size) / 2,
-            //     include:[{
-            //         model:Vaccine,
-            //         where:{
-            //             expired:{
-            //                 [Op.lte]:dayjs().format('YYYY-MM-DD')
-            //             }
-            //         }
-            //     },{
-            //         model:Department,attributes:['title']
-            //     }],
-            //     raw:true,
-            //     nest:true
-            // })
             const transformedData = {
-                rows:findUserWhereNotVaccined.count,
+                rowsNotVaccine:findUserWhereNotVaccined.count,
                 data:[...findUserWhereNotVaccined.rows.map(item=> {
                     return {
                         ...item,
@@ -280,14 +263,7 @@ class DashboardController {
                         id:item.dashboard_id
                     }
                 })
-                //     ,...getDataFromExpires.rows.map(item=>{
-                //     return {
-                //         ...item,
-                //         department:item?.department?.title,
-                //         id:item.dashboard_id
-                //     }
-                // }
-                // )
+
                 ]
 
             }

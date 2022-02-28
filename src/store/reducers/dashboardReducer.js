@@ -16,7 +16,9 @@ const initialState = {
     error:'',
     loading:true,
     page:0,
-    size:5
+    size:5,
+    rowsAll:0,
+    rowsNotVaccine: 0
 }
 
 function dashboardReducer(state = initialState,action){
@@ -25,7 +27,7 @@ function dashboardReducer(state = initialState,action){
             return {
                 ...state,
                 data:action.payload.data,
-                rows:action.payload.rows,
+                rowsAll:action.payload.rowsAll,
                 page:action.payload.page,
                 loading:false
             }
@@ -74,7 +76,7 @@ function dashboardReducer(state = initialState,action){
                 ...state,
                 loading:false,
                 notVaccine: action.payload.data,
-                rows:action.payload.rows,
+                rowsNotVaccine:action.payload.rowsNotVaccine,
                 page:action.payload.page
             }
         case LOADING_DATA :
