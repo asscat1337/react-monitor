@@ -86,7 +86,7 @@ function FormVaccine({currentId}) {
                 <Button
                     type="submit"
                     variant="contained"
-                    disabled={findUser?.isFirstComponent === 1 ? true : false}
+                    // disabled={findUser?.isFirstComponent === 1 ? true : false}
                     onClick={onClickFirstDate}
                 >
                     Добавить первый компонент

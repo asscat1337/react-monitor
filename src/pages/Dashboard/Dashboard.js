@@ -33,8 +33,6 @@ function Dashboard(){
     const vaccined = useSelector(state=>state.analytic?.vaccine)
     const notVaccined = useSelector(state=>state.analytic?.notVaccine)
 
-    console.log(page,size)
-
     const findUser = [...notVaccine ?? [],...rows ?? []].filter(item=>{
         return item.id === currentId
     })
@@ -94,6 +92,8 @@ function Dashboard(){
                         />
                     </>
                 )
+            default:
+                return null
         }
     }
 

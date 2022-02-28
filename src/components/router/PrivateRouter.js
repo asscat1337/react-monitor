@@ -7,7 +7,6 @@ function PrivateRouter({component:Component}){
     const location = useLocation()
     const isAuth = useSelector(state=>state.auth.isAuth)
 
-    console.log(isAuth)
 
     if(isAuth){
         return <Component/>
