@@ -6,6 +6,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import CustomDatePicker from "../../DatePicker/CustomDatePicker";
 import {actionFinalComponent, actionFirstComponent} from "../../../store/actions/actionDashboard";
 import CustomSnackBar from "../../SnackBar/CustomSnackBar";
+import dayjs from 'dayjs'
 import Context from "../../context/context";
 import React from "react";
 
@@ -37,11 +38,10 @@ function FormVaccine({currentId}) {
     const onClickFirstDate = (event) => {
         event.preventDefault()
         const obj = {
-            first_date: getValues("first_date"),
+            first_date: dayjs(getValues("first_date")).format('YYYY-MM-DD'),
             currentId,
             vaccineId: findUser?.vaccine?.vaccine_id
         }
-
         dispatch(actionFirstComponent(obj))
 
         onOpenSnackBar()
@@ -49,14 +49,13 @@ function FormVaccine({currentId}) {
     const onClickSecondDate = (event) => {
         event.preventDefault()
         const finalObj = {
-            last_date: getValues('last_date'),
+            last_date: dayjs(getValues('last_date')).format('YYYY-MM-DD'),
             currentId,
             first_date: findUser?.vaccine?.first_date,
             vaccineId: findUser?.vaccine?.vaccine_id
         }
 
-
-        dispatch(actionFinalComponent(finalObj))
+         dispatch(actionFinalComponent(finalObj))
 
         onOpenSnackBar()
     }
