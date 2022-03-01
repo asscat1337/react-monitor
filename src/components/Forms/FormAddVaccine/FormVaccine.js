@@ -62,8 +62,7 @@ function FormVaccine({currentId}) {
             currentId,
             vaccineId: findUser?.vaccine?.vaccine_id
         }
-        console.log(obj)
-        // dispatch(actionFirstComponent(obj))
+         dispatch(actionFirstComponent(obj))
 
         onOpenSnackBar()
     }
