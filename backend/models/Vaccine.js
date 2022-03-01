@@ -22,6 +22,9 @@ const Vaccine = sequelize.define('vaccine',{
     expired:{
         type:DataTypes.DATEONLY,
     },
+    other_date:{
+        type:DataTypes.DATEONLY
+    },
     isVaccined: {
         type: DataTypes.BOOLEAN,
     }

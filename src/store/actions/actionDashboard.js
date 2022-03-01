@@ -9,7 +9,8 @@ import {
     errorData,
     filterData,
     sickDate,
-    clearMessage
+    clearMessage,
+    otherDate
 } from "../reducers/dashboardReducer";
 import axios from "axios";
 import $api from "../../components/http/http";
@@ -104,6 +105,13 @@ function actionClearMessage(){
     }
 }
 
+function actionAddOtherDate(data){
+    return dispatch=>{
+        axios.post(`${process.env.REACT_APP_BASE_URL}/dashboard/other-date`,data)
+            .then(({data})=>dispatch(otherDate(data)))
+            .catch(error=>console.log(error))
+    }
+}
 
 export {
     actionGetData,
@@ -116,5 +124,6 @@ export {
     actionSearch,
     actionSickDate,
     actionFilterData,
-    actionClearMessage
+    actionClearMessage,
+    actionAddOtherDate
 }

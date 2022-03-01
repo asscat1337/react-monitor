@@ -239,7 +239,7 @@ class DashboardController {
 
             const findUserWhereNotVaccined = await Dashboard.findAndCountAll({
                 offset:Number(page)*Number(size),
-                limit:Number(size) / 2,
+                limit:Number(size),
                 where:{
                     isVaccined:0,
                     isSick:0
@@ -449,18 +449,6 @@ class DashboardController {
                     raw:true,
                     nest:true
                 })
-            // const getDataFromExpires = await Dashboard.findAll({
-            //     include:{
-            //         model:Vaccine,
-            //         where:{
-            //             expired:{
-            //                 [Op.lte]:dayjs().format('YYYY-MM-DD')
-            //             }
-            //         }
-            //     },
-            //     raw:true,
-            //     nest:true
-            // })
             return res.status(200).json({
                 vaccine:Object.values(getDataVaccined[0])[0],
                 notVaccined:Object.values(getDataNotVaccined[0])[0]
@@ -523,6 +511,54 @@ class DashboardController {
            }
         }catch (e) {
             console.log(e)
+        }
+    }
+
+    async addOtherDate(req,res,next){
+        try{
+            const {vaccineId,other_date,month,userId} = req.body
+
+            const expired = dayjs(other_date).add(month,'month').toDate()
+
+            if(!vaccineId){
+               const createbleData =  await Vaccine.create({
+                    other_date,
+                    expired
+                })
+                await Dashboard.update({
+                    isVaccined:1,
+                    isFirstComponent:1,
+                    vaccineId:createbleData.vaccine_id
+                },{
+                    where:{
+                        dashboard_id:userId
+                    }
+                })
+                const returnedUser = await DashboardService.findByPkUsers(userId)
+                return res.status(200).json({message:'Дата успешно добавлена!',data:returnedUser})
+            }
+
+            await Vaccine.update({
+                other_date,
+                expired
+            },{
+                where:{
+                    vaccine_id:vaccineId
+                }
+            })
+            await Dashboard.update({
+                isVaccined:1,
+                isFirstComponent:1
+            },{
+                where:{
+                    dashboard_id:userId
+                }
+            })
+            const returnedUser = await DashboardService.findByPkUsers(userId)
+            return res.status(200).json({message:'Дата успешно добавлена!',data:returnedUser})
+        }catch (e) {
+            console.log(e)
+            return res.status(500).json(e)
         }
     }
 

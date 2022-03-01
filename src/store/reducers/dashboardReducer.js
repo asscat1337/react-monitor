@@ -6,7 +6,11 @@ import {
     LOADING_DATA,
     GET_INFO,
     SEARCH_DATA,
-    ERROR_DASHBOARD, SICK_DATE, FILTER_DATA, CLEAR_MESSAGE
+    ERROR_DASHBOARD,
+    SICK_DATE,
+    FILTER_DATA,
+    CLEAR_MESSAGE,
+    OTHER_DATE
 } from "../types/dashboardTypes";
 
 const initialState = {
@@ -133,6 +137,22 @@ function dashboardReducer(state = initialState,action){
                 ...state,
                 message:action.payload.message
             }
+        case OTHER_DATE :
+            return {
+                ...state,
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.data.dashboard_id){
+                        return {
+                            ...item,
+                            isVaccined:action.payload.data.isVaccined,
+                            other_date:action.payload.data.other_date
+                        }
+                    }
+                    return item
+                }),
+                notVaccine:state.notVaccine.filter(item=>item.id !== action.payload.data.dashboard_id),
+                message:action.payload.message
+            }
         default:
             return state
     }
@@ -149,5 +169,6 @@ export const errorData=(payload)=>({type:ERROR_DASHBOARD,payload})
 export const sickDate=(payload)=>({type:SICK_DATE,payload})
 export const filterData=(payload)=>({type:FILTER_DATA,payload})
 export const clearMessage=()=>({type:CLEAR_MESSAGE})
+export const otherDate=(payload)=>({type:OTHER_DATE,payload})
 
 export default dashboardReducer

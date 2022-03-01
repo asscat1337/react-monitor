@@ -77,6 +77,10 @@ function Dashboard(){
                                         findUser[0].vaccine?.sick_date &&
                                         (<div>Дата заболевания:{findUser[0]?.vaccine.sick_date}</div>)
                                     }
+                                    {
+                                        findUser[0].vaccine?.other_date &&
+                                        (<div>Дата медотвода:{findUser[0]?.vaccine.other_date}</div>)
+                                    }
                                 </React.Fragment>
                         </>
                     ):(
