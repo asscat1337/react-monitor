@@ -33,7 +33,7 @@ function FormVaccine({currentId}) {
 
     const dispatch = useDispatch()
     const findUser = useSelector(state => {
-        const notVaccine = state.dashboard.notVaccine.find(user => user.id === currentId)
+        const notVaccine = state.dashboard?.notVaccine?.find(user => user.id === currentId)
         if (notVaccine === undefined) {
             return state.dashboard.data.find(user => user.id === currentId)
         }
