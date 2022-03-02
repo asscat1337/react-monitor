@@ -3,6 +3,7 @@ import {useDispatch,useSelector} from "react-redux";
 import {TabPanel,TabList,TabContext} from "@mui/lab";
 import {Box, Button, Tab,CssBaseline} from "@mui/material";
 import {Link} from 'react-router-dom'
+import dayjs from "dayjs";
 import {actionFilterData, actionGetData, actionGetNotVaccined, actionSearch} from "../../store/actions/actionDashboard";
 import NotVaccineDataGrid from "../../components/DataGrid/NotVaccineDataGrid/NotVaccineDataGrid";
 import СustomModal from "../../components/Modal/Modal";
@@ -64,22 +65,22 @@ function Dashboard(){
                             <h3>Информация о сотруднике</h3>
                             <div>ФИО:{findUser[0].fio}</div>
                             <div>СНИЛС:{findUser[0].snils}</div>
-                            <div>Дата рождения:{findUser[0].birthday}</div>
+                            <div>Дата рождения:{dayjs(findUser[0].birthday).format('DD-MM-YYYY')}</div>
                                 <React.Fragment>
                                     {findUser[0].vaccine?.first_date &&
-                                        <div>Дата первого компонента:{findUser[0]?.vaccine?.first_date}</div>
+                                        <div>Дата первого компонента:{dayjs(findUser[0]?.vaccine?.first_date).format('DD-MM-YYYY')}</div>
                                     }
                                     {
                                         findUser[0].vaccine?.last_date &&
-                                        (<div>Дата второго компонента:{findUser[0]?.vaccine.last_date}</div>)
+                                        (<div>Дата второго компонента:{dayjs(findUser[0]?.vaccine.last_date).format('DD-MM-YYYY')}</div>)
                                     }
                                     {
                                         findUser[0].vaccine?.sick_date &&
-                                        (<div>Дата заболевания:{findUser[0]?.vaccine.sick_date}</div>)
+                                        (<div>Дата заболевания:{dayjs(findUser[0]?.vaccine.other_date).format('DD-MM-YYYY')}</div>)
                                     }
                                     {
                                         findUser[0].vaccine?.other_date &&
-                                        (<div>Дата медотвода:{findUser[0]?.vaccine.other_date}</div>)
+                                        (<div>Дата медотвода:{dayjs(findUser[0]?.vaccine.other_date).format('DD-MM-YYYY')}</div>)
                                     }
                                 </React.Fragment>
                         </>
