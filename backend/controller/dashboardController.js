@@ -372,6 +372,7 @@ class DashboardController {
 
             const getUser = await DashboardService.findByPkUsers(currentId)
 
+
             await Dashboard.update({
                 isSick:1,
                 isVaccined:1
@@ -382,7 +383,7 @@ class DashboardController {
             })
             if(getUser.vaccineId === null){
                const updateVaccineSickUser = await Vaccine.create({
-                    sick_date,
+                    sick_date:dayjs(sick_date).format('YYYY-MM-DD'),
                     expired
                 })
                 await Dashboard.update({
@@ -405,7 +406,8 @@ class DashboardController {
             if(getUser.vaccineId && getUser.vaccine.first_date || getUser.vaccine.last_date || getUser.vaccine.sick_date){
 
                 await Vaccine.update({
-                    sick_date,expired
+                    sick_date:dayjs(sick_date).format('YYYY-MM-DD')
+                    ,expired
                 },{
                     where:{
                         vaccine_id:getUser.vaccineId

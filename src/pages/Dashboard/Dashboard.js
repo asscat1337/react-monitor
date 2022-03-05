@@ -76,7 +76,7 @@ function Dashboard(){
                                     }
                                     {
                                         findUser[0].vaccine?.sick_date &&
-                                        (<div>Дата заболевания:{dayjs(findUser[0]?.vaccine.other_date).format('DD-MM-YYYY')}</div>)
+                                        (<div>Дата заболевания:{dayjs(findUser[0]?.vaccine.sick_date).format('DD-MM-YYYY')}</div>)
                                     }
                                     {
                                         findUser[0].vaccine?.other_date &&
