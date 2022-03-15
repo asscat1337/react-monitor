@@ -25,6 +25,6 @@
     "node-schedule": "^2.1.0",
     "nodemon": "^2.0.15",
     "sequelize": "^6.14.1",
-    "xlsx": "^0.18.0"
+    "xlsx": "^0.18.3"
   }
 }

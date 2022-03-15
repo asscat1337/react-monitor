@@ -113,6 +113,18 @@ function actionAddOtherDate(data){
     }
 }
 
+async function generate(){
+    const response = await fetch(`${process.env.REACT_APP_BASE_URL}/dashboard/generate`)
+    const data = await response.blob()
+    const link = window.URL.createObjectURL(data)
+    const createLink = document.createElement('a')
+    createLink.href = link
+    createLink.download = 'Список сотрудников.xlsx';
+    document.body.appendChild(createLink)
+    createLink.click()
+
+}
+
 export {
     actionGetData,
     actionAddData,
@@ -125,5 +137,6 @@ export {
     actionSickDate,
     actionFilterData,
     actionClearMessage,
-    actionAddOtherDate
+    actionAddOtherDate,
+    generate
 }

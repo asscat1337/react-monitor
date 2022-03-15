@@ -19,6 +19,7 @@ router.get('/analytics',dashboardController.analytics)
 router.get('/filter',dashboardController.filter)
 router.get('/test-json',dashboardController.requestJson)
 router.post('/other-date',dashboardController.addOtherDate)
+router.get('/generate',dashboardController.generate)
 
 
 module.exports = router

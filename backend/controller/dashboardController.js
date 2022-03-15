@@ -5,6 +5,7 @@ const {Op,Sequelize} = require('sequelize')
 const FileLoad = require('../services/file-load')
 const dayjs = require('dayjs')
 const DashboardService = require('../services/dashboard-service')
+const xlsx = require('xlsx')
 
 class DashboardController {
 
@@ -564,6 +565,50 @@ class DashboardController {
         }
     }
 
+    async generate(req,res,next){
+        try{
+            const data = await Dashboard.findAll({
+                raw:true,
+                nest:true,
+                include:[
+                    {model:Vaccine},
+                    {model:Department,attributes:['title']}
+                ]
+            })
+            const mappedData = data.map(item=>{
+                return {
+                    fio:item.fio,
+                    birthday:item.birthday,
+                    snils:item.snils,
+                    position:item.position,
+                    isVaccined:item.isVaccined,
+                    isSick:item.isSick,
+                    status:item.status,
+                    department:item.department.title,
+                    first_date:item.vaccine.first_date,
+                    last_date:item.vaccine.last_date,
+                    sick_date:item.vaccine.sick_date,
+                    expired:item.vaccine.expired,
+                    other_date:item.vaccine.other_date
+                }
+            })
+            const Heading = [['ФИО', 'Дата рождения', 'СНИЛС','Должность',
+                'Вакцинирован?','Болел?','Статус','Отделение','Дата первого компонента',
+                'Дата второго компонента','Дата болезни','Дата окончания прививки','Другое']]
+            const wb = xlsx.utils.book_new();
+            const ws = xlsx.utils.json_to_sheet(mappedData,{origin:'A2',skipHeader:true})
+            xlsx.utils.sheet_add_aoa(ws,Heading)
+
+            xlsx.utils.book_append_sheet(wb,ws)
+            const buffer = xlsx.write(wb,{type:"buffer",bookType:"xlsx"})
+
+            return res.status(200).send(buffer)
+
+
+        }catch (e) {
+            console.log(e)
+        }
+    }
 
 }
 

@@ -3,6 +3,7 @@ import {DataGrid, getGridStringOperators, ruRU} from "@mui/x-data-grid";
 import {Button} from "@mui/material";
 import {useSelector} from "react-redux";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import CustomGridToolBar from "../../GridToolBar/GridToolbar";
 
 
 
@@ -98,6 +99,7 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setMo
                 columns={columns}
                 pagination
                 loading = {loading}
+                components={{Toolbar:CustomGridToolBar}}
             />
         </div>
     )
