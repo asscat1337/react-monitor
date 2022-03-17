@@ -4,7 +4,14 @@ import {TabPanel,TabList,TabContext} from "@mui/lab";
 import {Box, Button, Tab,CssBaseline} from "@mui/material";
 import {Link} from 'react-router-dom'
 import dayjs from "dayjs";
-import {actionFilterData, actionGetData, actionGetNotVaccined, actionSearch} from "../../store/actions/actionDashboard";
+import {
+    actionDeleteFinalComponent,
+    actionDeleteFirstComponent, actionDeleteOther, actionDeleteSick,
+    actionFilterData,
+    actionGetData,
+    actionGetNotVaccined,
+    actionSearch
+} from "../../store/actions/actionDashboard";
 import NotVaccineDataGrid from "../../components/DataGrid/NotVaccineDataGrid/NotVaccineDataGrid";
 import СustomModal from "../../components/Modal/Modal";
 import FormVaccine from "../../components/Forms/FormAddVaccine/FormVaccine";
@@ -51,6 +58,20 @@ function Dashboard(){
     },[debounceSearch,searchText])
 
 
+    const onDeleteFirstComponent=()=>{
+        dispatch(actionDeleteFirstComponent(findUser))
+    }
+
+    const onDeleteLastComponent=()=>{
+        dispatch(actionDeleteFinalComponent(findUser))
+    }
+
+    const onDeleteSick=()=>{
+        dispatch(actionDeleteSick(findUser))
+    }
+    const onDeleteOther=()=>{
+        dispatch(actionDeleteOther(findUser))
+    }
 
     const getModal=()=>{
         switch (modalValue){
@@ -68,19 +89,45 @@ function Dashboard(){
                             <div>Дата рождения:{dayjs(findUser[0].birthday).format('DD-MM-YYYY')}</div>
                                 <React.Fragment>
                                     {findUser[0].vaccine?.first_date &&
-                                        <div>Дата первого компонента:{dayjs(findUser[0]?.vaccine?.first_date).format('DD-MM-YYYY')}</div>
+                                        <div>
+                                            <span>
+                                                Дата первого компонента:{dayjs(findUser[0]?.vaccine?.first_date).format('DD-MM-YYYY')}
+                                            </span>
+                                            <Button onClick={onDeleteFirstComponent}>
+                                                Удалить
+                                            </Button>
+                                        </div>
                                     }
                                     {
                                         findUser[0].vaccine?.last_date &&
-                                        (<div>Дата второго компонента:{dayjs(findUser[0]?.vaccine.last_date).format('DD-MM-YYYY')}</div>)
+                                        (<div>
+                                            <span>
+                                                   Дата второго компонента:{dayjs(findUser[0]?.vaccine.last_date).format('DD-MM-YYYY')}
+                                            </span>
+                                            <Button onClick={onDeleteLastComponent}>
+                                                Удалить
+                                            </Button>
+                                        </div>)
                                     }
                                     {
                                         findUser[0].vaccine?.sick_date &&
-                                        (<div>Дата заболевания:{dayjs(findUser[0]?.vaccine.sick_date).format('DD-MM-YYYY')}</div>)
+                                        (<div>
+                                            <span> Дата заболевания:{dayjs(findUser[0]?.vaccine.sick_date).format('DD-MM-YYYY')}</span>
+                                            <Button onClick={onDeleteSick}>
+                                                Удалить
+                                            </Button>
+                                        </div>)
                                     }
                                     {
                                         findUser[0].vaccine?.other_date &&
-                                        (<div>Дата медотвода:{dayjs(findUser[0]?.vaccine.other_date).format('DD-MM-YYYY')}</div>)
+                                        (<div>
+                                            <span>
+                                                Дата медотвода:{dayjs(findUser[0]?.vaccine.other_date).format('DD-MM-YYYY')}
+                                            </span>
+                                            <Button onClick={onDeleteOther}>
+                                                Удалить
+                                            </Button>
+                                        </div>)
                                     }
                                 </React.Fragment>
                         </>

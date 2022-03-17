@@ -10,7 +10,11 @@ import {
     SICK_DATE,
     FILTER_DATA,
     CLEAR_MESSAGE,
-    OTHER_DATE
+    OTHER_DATE,
+    DELETE_OTHER,
+    DELETE_FIRST_COMPONENT,
+    DELETE_FINAL_COMPONENT,
+    DELETE_SICK_DATE
 } from "../types/dashboardTypes";
 
 const initialState = {
@@ -153,6 +157,38 @@ function dashboardReducer(state = initialState,action){
                 notVaccine:state.notVaccine.filter(item=>item.id !== action.payload.data.dashboard_id),
                 message:action.payload.message
             }
+        case DELETE_FIRST_COMPONENT :
+            return {
+                ...state,
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.id){
+                        return {
+                            ...item,
+                            vaccine:action.payload.vaccine
+                        }
+                    }
+                    return item
+                })
+            }
+        case DELETE_FINAL_COMPONENT :
+            return {
+                ...state,
+                data:state.data.filter(item=>item.id !== action.payload.id),
+                notVaccine: [...state.notVaccine,action.payload]
+            }
+        case DELETE_SICK_DATE :
+            return {
+                ...state,
+                data:state.data.filter(item=>item.id !==action.payload.id),
+                notVaccine: [...state.notVaccine,action.payload]
+            }
+        case DELETE_OTHER :
+            return {
+                ...state,
+                data:state.data.filter(item=>item.id !== action.payload.id),
+                notVaccine: [...state.notVaccine,action.payload]
+
+            }
         default:
             return state
     }
@@ -170,5 +206,8 @@ export const sickDate=(payload)=>({type:SICK_DATE,payload})
 export const filterData=(payload)=>({type:FILTER_DATA,payload})
 export const clearMessage=()=>({type:CLEAR_MESSAGE})
 export const otherDate=(payload)=>({type:OTHER_DATE,payload})
-
+export const deleteFirstComponent=(payload)=>({type:DELETE_FIRST_COMPONENT,payload})
+export const deleteFinalComponent=(payload)=>({type:DELETE_FINAL_COMPONENT,payload})
+export const deleteSickDate=(payload)=>({type:DELETE_SICK_DATE,payload})
+export const deleteOtherDate=(payload)=>({type:DELETE_OTHER,payload})
 export default dashboardReducer

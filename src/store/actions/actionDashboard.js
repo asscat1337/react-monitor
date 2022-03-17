@@ -10,7 +10,11 @@ import {
     filterData,
     sickDate,
     clearMessage,
-    otherDate
+    otherDate,
+    deleteSickDate,
+    deleteOtherDate,
+    deleteFinalComponent,
+    deleteFirstComponent
 } from "../reducers/dashboardReducer";
 import axios from "axios";
 import $api from "../../components/http/http";
@@ -125,6 +129,39 @@ async function generate(){
 
 }
 
+function actionDeleteFirstComponent(payload){
+    return dispatch=>{
+        axios.post(`${process.env.REACT_APP_BASE_URL}/dashboard/delete-first`,payload)
+            .then(({data})=>dispatch(deleteFirstComponent(data)))
+            .catch(error=>console.log(error))
+    }
+}
+
+function actionDeleteFinalComponent(payload){
+    return dispatch=>{
+        axios.delete(`${process.env.REACT_APP_BASE_URL}/dashboard/delete-final`,{data:payload})
+            .then(({data})=>dispatch(deleteFinalComponent(data)))
+            .catch(error=>console.log(error))
+    }
+}
+
+function actionDeleteSick(payload){
+    return dispatch=>{
+        axios.delete(`${process.env.REACT_APP_BASE_URL}/dashboard/delete-sick`,{data:payload})
+            .then(({data})=>dispatch(deleteOtherDate(data)))
+            .catch(error=>console.log(error))
+    }
+}
+
+function actionDeleteOther(payload){
+    return dispatch=>{
+        axios.delete(`${process.env.REACT_APP_BASE_URL}/dashboard/delete-other`,{data:payload})
+            .then(({data})=>dispatch(deleteOtherDate(data)))
+            .catch(error=>console.log(error))
+    }
+}
+
+
 export {
     actionGetData,
     actionAddData,
@@ -138,5 +175,9 @@ export {
     actionFilterData,
     actionClearMessage,
     actionAddOtherDate,
-    generate
+    generate,
+    actionDeleteFirstComponent,
+    actionDeleteSick,
+    actionDeleteFinalComponent,
+    actionDeleteOther
 }

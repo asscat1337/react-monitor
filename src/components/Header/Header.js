@@ -3,7 +3,6 @@ import {useNavigate} from 'react-router-dom'
 import {useDispatch} from "react-redux";
 import {actionLogout} from "../../store/actions/actionAuth";
 import CustomSwitch from "../Switch/CustomSwitch";
-import {generate} from "../../store/actions/actionDashboard";
 
 function Header({onChange,checked}){
     const navigate = useNavigate()
@@ -13,11 +12,6 @@ function Header({onChange,checked}){
         dispatch(actionLogout())
         navigate('/login')
     }
-    //
-    // const onGenerateData=()=>{
-    //     console.log('data')
-    //     generate()
-    // }
 
     return (
         <Box>
@@ -26,10 +20,6 @@ function Header({onChange,checked}){
                     onChange={onChange}
                     checked={checked === 'light' ? true:false}
                 />
-
-                {/*<Button onClick={onGenerateData}>*/}
-                {/*    Сформировать список*/}
-                {/*</Button>*/}
 
                 <Button onClick={onLogout}>
                     Выход

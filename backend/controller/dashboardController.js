@@ -610,6 +610,117 @@ class DashboardController {
         }
     }
 
+    async deleteFirstComponent(req,res,next){
+        try{
+            const {vaccine,id} = req.body[0]
+            console.log(vaccine)
+             await Vaccine.update({
+                first_date:null
+            },{
+                where:{
+                    vaccine_id:vaccine.vaccine_id
+                }
+            })
+           await Dashboard.update({
+               isFirstComponent:0
+           },{
+               where:{
+                   dashboard_id:id
+               }
+           })
+            const getUser = await DashboardService.findByPkUsers(id)
+
+            return res.status(200).json(getUser)
+
+        }catch (e) {
+            return res.status(500).json(e)
+        }
+    }
+
+    async deleteFinalComponent(req,res,next){
+        try{
+            const {vaccine,id} = req.body[0]
+            await Vaccine.update({
+                last_date:null
+            },{
+                where:{
+                    vaccine_id:vaccine.vaccine_id
+                }
+            })
+            await Dashboard.update({
+                isVaccined:0
+            },{
+                where:{
+                    dashboard_id:id
+                }
+             })
+
+            const getUser = await DashboardService.findByPkUsers(id)
+            return res.status(200).json({
+                ...getUser,
+                id:getUser.dashboard_id,
+                department:getUser.department.title
+            })
+        }catch (e){
+            return res.status(500).json(e)
+        }
+    }
+
+    async deleteSickDate(req,res,next){
+        try{
+            const {vaccine,id} = req.body[0]
+
+            await Vaccine.update({
+                sick_date:null
+            },{
+                where:{
+                    vaccine_id:vaccine.vaccine_id
+                }
+            })
+
+            if(vaccine.first_date ===null && vaccine.last_date === null){
+                await Dashboard.update({
+                    isVaccined:0,
+                    isFirstComponent:0
+                },{
+                    where:{
+                        dashboard_id:id
+                    }
+                })
+            }
+
+
+        }catch (e) {
+            return res.status(500).json(e)
+        }
+    }
+    async deleteOtherDate(req,res,next){
+        try{
+            const {vaccine,id} = req.body[0]
+            await Vaccine.update({
+                other_date:null
+            },{
+                where:{
+                    vaccine_id:vaccine.vaccine_id
+                }
+            })
+
+            if(vaccine.first_date ===null && vaccine.last_date === null){
+                await Dashboard.update({
+                    isVaccined:0,
+                    isFirstComponent:0
+                },{
+                    where:{
+                        dashboard_id:id
+                    }
+                })
+            }
+
+        }catch (e) {
+            return res.status(500).json(e)
+        }
+    }
+
 }
 
 

@@ -20,6 +20,9 @@ router.get('/filter',dashboardController.filter)
 router.get('/test-json',dashboardController.requestJson)
 router.post('/other-date',dashboardController.addOtherDate)
 router.get('/generate',dashboardController.generate)
-
+router.post('/delete-first',dashboardController.deleteFirstComponent)
+router.delete('/delete-final',dashboardController.deleteFinalComponent)
+router.delete('/delete-sick',dashboardController.deleteSickDate)
+router.delete('/delete-other',dashboardController.deleteOtherDate)
 
 module.exports = router
