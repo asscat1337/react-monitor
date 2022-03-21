@@ -27,6 +27,9 @@ const Vaccine = sequelize.define('vaccine',{
     },
     isVaccined: {
         type: DataTypes.BOOLEAN,
+    },
+    componentName:{
+        type:DataTypes.TEXT
     }
 },{
     timestamps:false,

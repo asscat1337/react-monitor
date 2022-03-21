@@ -3,17 +3,19 @@ import {Container} from "@mui/material";
 import { Pie} from "react-chartjs-2";
 import {Chart,ArcElement,Tooltip,Legend} from "chart.js";
 
-const CustomChart = ({vaccine,notVaccine}) => {
+const CustomChart = ({vaccine,notVaccine,sick}) => {
     Chart.register(ArcElement,Tooltip,Legend)
-    const percentageNotVaccined = (notVaccine/(vaccine+notVaccine) * 100).toFixed(1)
-    const percentageVaccine = (vaccine/(vaccine+notVaccine) * 100).toFixed(1)
+    const percentageNotVaccined = (notVaccine/(vaccine+notVaccine+sick) * 100).toFixed(1)
+    const percentageVaccine = (vaccine/(vaccine+notVaccine+sick) * 100).toFixed(1)
+    const percentageSick = (sick/(vaccine+notVaccine+sick) * 100).toFixed(1)
+    console.log(percentageSick)
     const pieChartData = {
-        labels: [`Вакцинирован ${percentageVaccine}%`, `Не вакцинирован ${percentageNotVaccined}%`],
+        labels: [`Вакцинирован ${percentageVaccine}%`, `Не вакцинирован ${percentageNotVaccined}%`,`Переболели ${percentageSick}%`],
         datasets: [{
-            data: [vaccine, notVaccine],
+            data: [vaccine, notVaccine,sick],
             label: "Список вакцинированных",
-            backgroundColor: ["#2FDE00", "#00A6B4", "#ff6600"],
-            hoverBackgroundColor: ["#175000", "#003350", "#993d00"],
+            backgroundColor: ["#2FDE00", "#00A6B4", "#ff6600","faf0e6"],
+            hoverBackgroundColor: ["#175000", "#003350", "#993d00",],
             borderWidth:1
         }],
     };

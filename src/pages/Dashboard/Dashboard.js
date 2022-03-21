@@ -40,6 +40,7 @@ function Dashboard(){
     const notVaccine = useSelector(state=>state.dashboard?.notVaccine)
     const vaccined = useSelector(state=>state.analytic?.vaccine)
     const notVaccined = useSelector(state=>state.analytic?.notVaccine)
+    const sick = useSelector(state=>state.analytic?.sick)
 
     const findUser = [...notVaccine ?? [],...rows ?? []].filter(item=>{
         return item.id === currentId
@@ -235,6 +236,7 @@ function Dashboard(){
                     <Chart
                         vaccine={vaccined}
                         notVaccine={notVaccined}
+                        sick={sick}
                     />
                 </TabPanel>
             </TabContext>

@@ -436,7 +436,6 @@ class DashboardController {
                 where:{
                     [Op.or]:{
                         isVaccined:1,
-                        isSick:1
                     }
                 },
                 raw:true,
@@ -452,9 +451,24 @@ class DashboardController {
                     raw:true,
                     nest:true
                 })
+
+            const getDataSick = await Dashboard.findAll({
+                attributes:[
+                    Sequelize.fn('COUNT',Sequelize.col('isSick'))
+                ],
+                where:{
+                    isSick:1
+                },
+                raw:true,
+                nest:true
+            })
+
+
+
             return res.status(200).json({
                 vaccine:Object.values(getDataVaccined[0])[0],
-                notVaccined:Object.values(getDataNotVaccined[0])[0]
+                notVaccined:Object.values(getDataNotVaccined[0])[0],
+                sick:Object.values(getDataSick[0])[0]
             })
         }catch(e){
             console.log(e)

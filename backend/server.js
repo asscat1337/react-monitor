@@ -10,11 +10,15 @@ const analytics = require('./router/analyticsRouter')
 const FileLoad = require('./services/file-load')
 const dashboardService = require('./services/dashboard-service')
 const schedule = require('node-schedule')
+const fs = require('fs')
+
+  app.use(cors({
+    origin:'http://localhost:3000',
+}))
 
 app.use(cookieParser())
 app.use(express.static(path.resolve(__dirname,'../build')))
 app.use(express.json())
-app.use(cors())
 
 app.use('/dashboard',dashboard)
 app.use('/auth',auth)
@@ -25,15 +29,18 @@ app.get("*",(req,res)=>{
 })
 
 
-
 const delay =(ms)=> new Promise(resolve => setTimeout(resolve,ms))
 
 const job = schedule.scheduleJob('0 2 * * 0',async ()=>{
-    await FileLoad.loadFromPDF()
+    if(fs.access('./pdf2json')){
+        await FileLoad.loadFromPDF()
         .then(async (data)=>{
            await delay(5000)
            await FileLoad.callAction(data)
         })
+    }else{
+        return
+    }
 
  })
 

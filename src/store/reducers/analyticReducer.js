@@ -12,7 +12,8 @@ function analyticReducer(state=initialState,action){
         case DATA_ANALYTIC :
             return {
                 vaccine:action.payload.vaccine,
-                notVaccine: action.payload.notVaccined
+                notVaccine: action.payload.notVaccined,
+                sick:action.payload.sick
             }
         default :
             return state
