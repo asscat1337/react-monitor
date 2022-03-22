@@ -1,3 +1,4 @@
+import React from 'react'
 import {
     Button,
     Container,
@@ -9,19 +10,19 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
-    Box
+    Box,
+    TextField
 } from "@mui/material";
 import {useDispatch,useSelector} from "react-redux";
 import {useForm,Controller} from 'react-hook-form'
 import * as yup from 'yup'
 import {yupResolver} from "@hookform/resolvers/yup";
 import CustomDatePicker from "../../DatePicker/CustomDatePicker";
-import {actionFinalComponent, actionFirstComponent,actionAddOtherDate} from "../../../store/actions/actionDashboard";
+import {actionFinalComponent, actionFirstComponent,actionAddOtherDate, actionAddOneComponent} from "../../../store/actions/actionDashboard";
 import CustomSnackBar from "../../SnackBar/CustomSnackBar";
 import generateArray from "../../../helpers/generateArray";
 import dayjs from 'dayjs'
 import Context from "../../context/context";
-import React from "react";
 
 
 function FormVaccine({currentId}) {
@@ -29,6 +30,7 @@ function FormVaccine({currentId}) {
     const {onOpenSnackBar} = React.useContext(Context)
     const getMonth = generateArray(12)
     const [other,setOther] = React.useState(false)
+    const [oneComponent,setOneComponent] = React.useState(false)
     const [month,setMonth] = React.useState('')
 
     const dispatch = useDispatch()
@@ -47,7 +49,7 @@ function FormVaccine({currentId}) {
         first_date: yup.date(),
         last_date: yup.date()
     })
-    const {control, getValues} = useForm({
+    const {control, getValues,reset} = useForm({
         resolver: yupResolver(schema)
     })
 
@@ -55,16 +57,22 @@ function FormVaccine({currentId}) {
         setOther(!other)
     }
 
+    const onChangeOneComponent=()=>{
+        setOneComponent(!oneComponent)
+    }
+
     const onClickFirstDate = (event) => {
         event.preventDefault()
         const obj = {
             first_date: dayjs(getValues("first_date")).format('YYYY-MM-DD'),
             currentId,
-            vaccineId: findUser?.vaccine?.vaccine_id
+            vaccineId: findUser?.vaccine?.vaccine_id,
+            componentName:getValues('vaccine')
         }
-         dispatch(actionFirstComponent(obj))
+        dispatch(actionFirstComponent(obj))
 
         onOpenSnackBar()
+        reset()
     }
     const onClickSecondDate = (event) => {
         event.preventDefault()
@@ -93,6 +101,18 @@ function FormVaccine({currentId}) {
 
         onOpenSnackBar()
     }
+    const onAddOneComponent=(event)=>{
+        event.preventDefault()
+
+        dispatch(actionAddOneComponent(
+            {
+                vaccineId:findUser?.vaccine?.vaccine_id,
+                userId:findUser?.id,
+                dateOne:dayjs(getValues('date_one')).format('YYYY-MM-DD'),
+                componentName:getValues('vaccine')
+            }
+        ))
+    }
 
     return (
         <>
@@ -104,7 +124,24 @@ function FormVaccine({currentId}) {
                         />
                     </Portal>
                 )}
-                {!other && (
+                <h5>Форма добавления вакцины</h5>
+                {!other &&
+                                <Controller
+                                name="vaccine"
+                                control={control}
+                                render={({field:{value,onChange}})=>(
+                                    <TextField
+                                    value={value || ""}
+                                    onChange={newValue=>onChange(newValue)}
+                                    label="Название вакцины"
+                                    variant="standard" 
+                                    margin='normal'
+                                    fullWidth
+                                />
+                                )}
+                            />
+                }
+                {(!other && !oneComponent) && (
                     <>
                    <h5>Дата первой вакцины</h5>
                     <Controller
@@ -149,7 +186,7 @@ function FormVaccine({currentId}) {
                     )}
                   </>
                 )}
-                {other && (
+                {(other && !oneComponent) &&  (
                     <Box sx={{display:'flex',justifyContent:'center',flexDirection:'column'}}>
                         <h5>Другое</h5>
                         <Controller
@@ -188,10 +225,35 @@ function FormVaccine({currentId}) {
                         </Button>
                     </Box>
                 )}
+                { oneComponent && (
+                    <>
+                        <Controller
+                            name='date_one'
+                            control={control}
+                            render={({field:{value,onChange}})=>(
+                                <CustomDatePicker
+                                    value={value}
+                                    onChange={val=>onChange(val)}
+                                />
+                            )}
+                        />
+                        <Button
+                            onClick={onAddOneComponent}
+                        >
+                            Добавить дату
+                        </Button>
+                    </>
+                )                        
+
+                }
                 <FormGroup>
                     <FormControlLabel
                         control={<Checkbox onChange={onChangeOther}/>}
-                        label={"Другое"}
+                        label="Другое"
+                   />
+                   <FormControlLabel
+                        control={<Checkbox onChange={onChangeOneComponent}/>}
+                        label="Один компонент"
                    />
                 </FormGroup>
             </Container>

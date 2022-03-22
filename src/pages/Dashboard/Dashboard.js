@@ -89,6 +89,11 @@ function Dashboard(){
                             <div>СНИЛС:{findUser[0].snils}</div>
                             <div>Дата рождения:{dayjs(findUser[0].birthday).format('DD-MM-YYYY')}</div>
                                 <React.Fragment>
+                                    {findUser[0].vaccine?.componentName &&
+                                        <div>
+                                            <span>Название вакцины:{findUser[0]?.vaccine?.componentName}</span>
+                                        </div>
+                                    }
                                     {findUser[0].vaccine?.first_date &&
                                         <div>
                                             <span>

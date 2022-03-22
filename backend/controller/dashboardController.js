@@ -126,10 +126,11 @@ class DashboardController {
 
     async addFirstDate(req,res,next){
         try{
-            const {first_date,currentId,vaccineId} = req.body
+            const {first_date,currentId,vaccineId,componentName} = req.body
             if(vaccineId !== null){
                  await Vaccine.update({
                     first_date,
+                    componentName
                 },{
                     where:{
                         vaccine_id:vaccineId
@@ -159,7 +160,8 @@ class DashboardController {
 
             const createFirstDate = await Vaccine.create({
                 first_date,
-                isSick:0
+                isSick:0,
+                componentName
             })
 
 
@@ -226,7 +228,7 @@ class DashboardController {
 
             return res.status(200).json({
                 data:getUser,
-                message:'Дата второго компонента успешно добавлено!'
+                message:'Дата второго компонента успешно добавлена!'
             })
 
         }catch(e){
@@ -399,12 +401,12 @@ class DashboardController {
                 const findUser = await DashboardService.findByPkUsers(currentId)
                 return res.status(200).json({
                     data:findUser,
-                    message:'Дата болезни успешно добавлено!'
+                    message:'Дата болезни успешно добавлена!'
                 })
             }
 
 
-            if(getUser.vaccineId && getUser.vaccine.first_date || getUser.vaccine.last_date || getUser.vaccine.sick_date){
+            if((getUser.vaccineId && getUser.vaccine.first_date) || getUser.vaccine.last_date || getUser.vaccine.sick_date){
 
                 await Vaccine.update({
                     sick_date:dayjs(sick_date).format('YYYY-MM-DD')
@@ -419,7 +421,7 @@ class DashboardController {
 
                 return res.status(200).json({
                     data:test,
-                    message:'Дата болезни успешно добавлено!'
+                    message:'Дата болезни успешно добавлена!'
                 })
             }
 
@@ -603,12 +605,13 @@ class DashboardController {
                     last_date:item.vaccine.last_date,
                     sick_date:item.vaccine.sick_date,
                     expired:item.vaccine.expired,
-                    other_date:item.vaccine.other_date
+                    other_date:item.vaccine.other_date,
+                    vaccine:item.vaccine.componentName
                 }
             })
             const Heading = [['ФИО', 'Дата рождения', 'СНИЛС','Должность',
                 'Вакцинирован?','Болел?','Статус','Отделение','Дата первого компонента',
-                'Дата второго компонента','Дата болезни','Дата окончания прививки','Другое']]
+                'Дата второго компонента','Дата болезни','Дата окончания прививки','Другое','Название вакцины']]
             const wb = xlsx.utils.book_new();
             const ws = xlsx.utils.json_to_sheet(mappedData,{origin:'A2',skipHeader:true})
             xlsx.utils.sheet_add_aoa(ws,Heading)
@@ -733,6 +736,47 @@ class DashboardController {
         }catch (e) {
             return res.status(500).json(e)
         }
+    }
+
+    async addOneComponent(req,res,next){
+        try{
+            const {vaccineId,userId,dateOne,componentName} = req.body
+            
+            if(vaccineId){
+                await Vaccine.update({
+                    last_date:dayjs(dateOne).format('YYYY-MM-DD'),
+                    componentName
+                },{
+                    where:{
+                        vaccine_id:vaccineId
+                    }
+                })
+
+                const getUser = await DashboardService.findByPkUsers(userId)
+
+                return res.status(200).json(getUser)
+            }
+
+           const createdVaccine =  await Vaccine.create({
+                last_date:dayjs(dateOne).format('YYYY-MM-DD'),
+                componentName
+            })
+
+            await Dashboard.update({
+                isVaccined:1,
+                isFirstComponent:0,
+                isSick:0,
+                vaccineId:createdVaccine.vaccine_id
+            })
+
+            const getUser = await DashboardService.findByPkUsers(userId)
+
+            return res.status(200).json(getUser)
+
+        }catch(e){
+            console.log(e)
+        }
+
     }
 
 }

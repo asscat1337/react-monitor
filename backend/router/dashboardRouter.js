@@ -24,5 +24,6 @@ router.post('/delete-first',dashboardController.deleteFirstComponent)
 router.delete('/delete-final',dashboardController.deleteFinalComponent)
 router.delete('/delete-sick',dashboardController.deleteSickDate)
 router.delete('/delete-other',dashboardController.deleteOtherDate)
+router.post('/one-component',dashboardController.addOneComponent)
 
 module.exports = router

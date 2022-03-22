@@ -161,6 +161,14 @@ function actionDeleteOther(payload){
     }
 }
 
+function actionAddOneComponent(payload){
+    return dispatch=>{
+        axios.post(`${process.env.REACT_APP_BASE_URL}/dashboard/one-component`,payload)
+            .then(({data})=>console.log(data))
+            .catch(error=>console.log(error))
+    }
+}
+
 
 export {
     actionGetData,
@@ -179,5 +187,6 @@ export {
     actionDeleteFirstComponent,
     actionDeleteSick,
     actionDeleteFinalComponent,
-    actionDeleteOther
+    actionDeleteOther,
+    actionAddOneComponent
 }

@@ -14,7 +14,8 @@ import {
     DELETE_OTHER,
     DELETE_FIRST_COMPONENT,
     DELETE_FINAL_COMPONENT,
-    DELETE_SICK_DATE
+    DELETE_SICK_DATE,
+    ADD_ONE_COMPONENT
 } from "../types/dashboardTypes";
 
 const initialState = {
@@ -137,7 +138,7 @@ function dashboardReducer(state = initialState,action){
                 message:''
             }
         case ERROR_DASHBOARD :
-            return {
+            return { 
                 ...state,
                 message:action.payload.message
             }
@@ -189,6 +190,20 @@ function dashboardReducer(state = initialState,action){
                 notVaccine: [...state.notVaccine,action.payload]
 
             }
+        case ADD_ONE_COMPONENT :
+            return {
+                ...state,
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.dashboard_id){
+                            return {
+                                ...item,
+                                vaccine:action.payload.vaccine
+                            }
+                    }
+                    return item
+                }),
+                notVaccine:state.notVaccine.filter(item=>item.id !== action.payload.dashboard_id)
+            }    
         default:
             return state
     }
@@ -210,4 +225,7 @@ export const deleteFirstComponent=(payload)=>({type:DELETE_FIRST_COMPONENT,paylo
 export const deleteFinalComponent=(payload)=>({type:DELETE_FINAL_COMPONENT,payload})
 export const deleteSickDate=(payload)=>({type:DELETE_SICK_DATE,payload})
 export const deleteOtherDate=(payload)=>({type:DELETE_OTHER,payload})
+export const addOneComponent=(payload)=>({type:ADD_ONE_COMPONENT,payload})
+
+
 export default dashboardReducer
