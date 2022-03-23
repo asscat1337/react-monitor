@@ -14,7 +14,8 @@ import {
     deleteSickDate,
     deleteOtherDate,
     deleteFinalComponent,
-    deleteFirstComponent
+    deleteFirstComponent,
+    addOneComponent
 } from "../reducers/dashboardReducer";
 import axios from "axios";
 import $api from "../../components/http/http";
@@ -164,7 +165,7 @@ function actionDeleteOther(payload){
 function actionAddOneComponent(payload){
     return dispatch=>{
         axios.post(`${process.env.REACT_APP_BASE_URL}/dashboard/one-component`,payload)
-            .then(({data})=>console.log(data))
+            .then(({data})=>dispatch(addOneComponent(data)))
             .catch(error=>console.log(error))
     }
 }

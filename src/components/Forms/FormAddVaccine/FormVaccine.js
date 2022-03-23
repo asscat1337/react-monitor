@@ -44,6 +44,7 @@ function FormVaccine({currentId}) {
 
     const message = useSelector(state => state.dashboard.message)
 
+    console.log(message)
 
     const schema = yup.object().shape({
         first_date: yup.date(),
@@ -112,18 +113,20 @@ function FormVaccine({currentId}) {
                 componentName:getValues('vaccine')
             }
         ))
+        onOpenSnackBar()
+        reset()
     }
 
     return (
         <>
             <Container>
-                {message && (
+                {message ? (
                     <Portal>
                         <CustomSnackBar
                             message={message}
                         />
                     </Portal>
-                )}
+                ):null}
                 <h5>Форма добавления вакцины</h5>
                 {!other &&
                                 <Controller
@@ -238,6 +241,8 @@ function FormVaccine({currentId}) {
                             )}
                         />
                         <Button
+                            type='submit'
+                            variant='contained'
                             onClick={onAddOneComponent}
                         >
                             Добавить дату

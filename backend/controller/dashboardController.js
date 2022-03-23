@@ -751,10 +751,19 @@ class DashboardController {
                         vaccine_id:vaccineId
                     }
                 })
-
+                await Dashboard.update({
+                    isVaccined:1
+                },{
+                    where:{
+                        dashboard_id:userId
+                    }
+                })
                 const getUser = await DashboardService.findByPkUsers(userId)
 
-                return res.status(200).json(getUser)
+                 return res.status(200).json({
+                     data:getUser,
+                     message:'Вакцина успешно добавлена!'
+                 })
             }
 
            const createdVaccine =  await Vaccine.create({
@@ -767,11 +776,18 @@ class DashboardController {
                 isFirstComponent:0,
                 isSick:0,
                 vaccineId:createdVaccine.vaccine_id
+            },{
+                where:{
+                    dashboard_id:userId
+                }
             })
 
             const getUser = await DashboardService.findByPkUsers(userId)
 
-            return res.status(200).json(getUser)
+             return res.status(200).json({
+                 data:getUser,
+                 message:'Вакцина успешно добавлена!'
+             })
 
         }catch(e){
             console.log(e)

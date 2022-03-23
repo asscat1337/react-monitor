@@ -193,16 +193,18 @@ function dashboardReducer(state = initialState,action){
         case ADD_ONE_COMPONENT :
             return {
                 ...state,
-                data:state.data.map(item=>{
-                    if(item.id === action.payload.dashboard_id){
+                data:state.data.map(item=>{ 
+                    if(item.id === action.payload.data.dashboard_id){
                             return {
                                 ...item,
-                                vaccine:action.payload.vaccine
+                                isVaccined:action.payload.data.isVaccined,
+                                vaccine:action.payload.data.vaccine
                             }
                     }
                     return item
                 }),
-                notVaccine:state.notVaccine.filter(item=>item.id !== action.payload.dashboard_id)
+                notVaccine:state.notVaccine?.filter(item=>item.id !== action.payload.data.dashboard_id),
+                message:action.payload.message
             }    
         default:
             return state
