@@ -30,6 +30,9 @@ const Vaccine = sequelize.define('vaccine',{
     },
     componentName:{
         type:DataTypes.TEXT
+    },
+    reason:{
+        type:DataTypes.TEXT
     }
 },{
     timestamps:false,

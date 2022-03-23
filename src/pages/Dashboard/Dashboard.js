@@ -135,6 +135,13 @@ function Dashboard(){
                                             </Button>
                                         </div>)
                                     }
+                                    {
+                                        findUser[0].vaccine?.reason && (
+                                            <div>
+                                                <span>Причина:{findUser[0]?.vaccine.reason}</span>
+                                            </div>
+                                        )
+                                    }
                                 </React.Fragment>
                         </>
                     ):(

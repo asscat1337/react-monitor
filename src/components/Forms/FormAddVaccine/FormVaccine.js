@@ -96,7 +96,8 @@ function FormVaccine({currentId}) {
             other_date:dayjs(getValues('other_date')).format('YYYY-MM-DD'),
             month:month,
             vaccineId:findUser?.vaccine?.vaccine_id,
-            userId:findUser?.id
+            userId:findUser?.id,
+            reason:getValues('reason')
         }
         dispatch(actionAddOtherDate(otherObject))
 
@@ -219,6 +220,18 @@ function FormVaccine({currentId}) {
                                 ))}
                             </Select>
                         </FormControl>
+                        <Controller
+                            name="reason"
+                            control={control}
+                            render={({field:{value,onChange}})=>(
+                                <TextField
+                                    label="Причина"
+                                    margin='normal'
+                                    value={value || ""}
+                                    onChange={val=>onChange(val)}
+                                />
+                            )}
+                        />
                         <Button sx={{m:1}}
                             type="submit"
                             variant="contained"

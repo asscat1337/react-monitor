@@ -535,14 +535,15 @@ class DashboardController {
 
     async addOtherDate(req,res,next){
         try{
-            const {vaccineId,other_date,month,userId} = req.body
+            const {vaccineId,other_date,month,userId,reason} = req.body
 
             const expired = dayjs(other_date).add(month,'month').toDate()
 
             if(!vaccineId){
                const createbleData =  await Vaccine.create({
                     other_date,
-                    expired
+                    expired,
+                    reason
                 })
                 await Dashboard.update({
                     isVaccined:1,
@@ -559,7 +560,8 @@ class DashboardController {
 
             await Vaccine.update({
                 other_date,
-                expired
+                expired,
+                reason
             },{
                 where:{
                     vaccine_id:vaccineId
@@ -576,7 +578,6 @@ class DashboardController {
             const returnedUser = await DashboardService.findByPkUsers(userId)
             return res.status(200).json({message:'Дата успешно добавлена!',data:returnedUser})
         }catch (e) {
-            console.log(e)
             return res.status(500).json(e)
         }
     }
@@ -647,7 +648,11 @@ class DashboardController {
            })
             const getUser = await DashboardService.findByPkUsers(id)
 
-            return res.status(200).json(getUser)
+            return res.status(200).json({
+                ...getUser,
+                id:getUser.dashboard_id,
+                title:getUser.department.title
+            })
 
         }catch (e) {
             return res.status(500).json(e)
@@ -705,6 +710,13 @@ class DashboardController {
                     }
                 })
             }
+            const getUser = await DashboardService.findByPkUsers(id)
+
+            return res.status(200).json({
+                ...getUser,
+                id:getUser.dashboard_id,
+                title:getUser.department.title
+            })
 
 
         }catch (e) {
@@ -715,14 +727,15 @@ class DashboardController {
         try{
             const {vaccine,id} = req.body[0]
             await Vaccine.update({
-                other_date:null
+                other_date:null,
+                reason:null
             },{
                 where:{
                     vaccine_id:vaccine.vaccine_id
                 }
             })
 
-            if(vaccine.first_date ===null && vaccine.last_date === null){
+            if(vaccine.first_date === null && vaccine.last_date === null){
                 await Dashboard.update({
                     isVaccined:0,
                     isFirstComponent:0
@@ -732,6 +745,14 @@ class DashboardController {
                     }
                 })
             }
+
+            const getUser = await DashboardService.findByPkUsers(id)
+
+            return res.status(200).json({
+                ...getUser,
+                id:getUser.department_id,
+                title:getUser.department.title
+            })
 
         }catch (e) {
             return res.status(500).json(e)

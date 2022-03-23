@@ -150,7 +150,8 @@ function dashboardReducer(state = initialState,action){
                         return {
                             ...item,
                             isVaccined:action.payload.data.isVaccined,
-                            other_date:action.payload.data.other_date
+                            other_date:action.payload.data.other_date,
+                            reason:action.payload.vaccine.reason
                         }
                     }
                     return item
@@ -165,6 +166,7 @@ function dashboardReducer(state = initialState,action){
                     if(item.id === action.payload.id){
                         return {
                             ...item,
+                            isVaccined:action.payload.isVaccined,
                             vaccine:action.payload.vaccine
                         }
                     }
@@ -174,19 +176,46 @@ function dashboardReducer(state = initialState,action){
         case DELETE_FINAL_COMPONENT :
             return {
                 ...state,
-                data:state.data.filter(item=>item.id !== action.payload.id),
-                notVaccine: [...state.notVaccine,action.payload]
+                notVaccine: [...state.notVaccine,action.payload],
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.id){
+                        return {
+                            ...item,
+                            isVaccined:action.payload.isVaccined,
+                            vaccine:action.payload.vaccine
+                        }
+                    }
+                    return item
+                })
             }
         case DELETE_SICK_DATE :
             return {
                 ...state,
-                data:state.data.filter(item=>item.id !==action.payload.id),
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.id){
+                        return {
+                            ...item,
+                            isVaccined:action.payload.isVaccined,
+                            vaccine:action.payload.vaccine
+                        }
+                    }
+                    return item
+                }),
                 notVaccine: [...state.notVaccine,action.payload]
             }
         case DELETE_OTHER :
             return {
                 ...state,
-                data:state.data.filter(item=>item.id !== action.payload.id),
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.id){
+                        return {
+                            ...item,
+                            isVaccined:action.payload.isVaccined,
+                            vaccine:action.payload.vaccine
+                        }
+                    }
+                    return item
+                }),
                 notVaccine: [...state.notVaccine,action.payload]
 
             }
