@@ -640,7 +640,8 @@ class DashboardController {
                 }
             })
            await Dashboard.update({
-               isFirstComponent:0
+               isFirstComponent:0,
+               isVaccined:0
            },{
                where:{
                    dashboard_id:id
