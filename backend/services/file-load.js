@@ -26,9 +26,10 @@ class FileLoad{
                     td.forEach(item=>{
                         const tr = item.querySelectorAll('td')
                         const findDepartmentId = findDepartment.find(item=>item.title === tr[0].textContent)
+                        console.log(findDepartmentId)
                         results.push({
                             fio:tr[1].textContent,
-                            departmentId:findDepartmentId.department_id,
+                            departmentId:findDepartmentId?.department_id,
                             position:tr[2].textContent,
                             birthday:tr[3].textContent.split('.').reverse().join('-'),
                             snils:tr[4].textContent,
@@ -98,7 +99,7 @@ class FileLoad{
 
    async callAction(newData){
        for await (const data of newData){
-           await this.updateStatus(data)
+            await this.updateStatus(data)
             await this.addNewEmployee(data)
        }
     }

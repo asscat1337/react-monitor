@@ -10,7 +10,7 @@ const sequelize = new Sequelize(DB,DB_USER,DB_PASS,{
 async function init(){
     try{
         await sequelize.authenticate()
-          await sequelize.sync({alter:true})
+          await sequelize.sync()
     }catch (e) {
         console.log(e)
     }

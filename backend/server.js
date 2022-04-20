@@ -24,23 +24,31 @@ app.use('/dashboard',dashboard)
 app.use('/auth',auth)
 app.use('/analytics',analytics)
 
-app.get("*",(req,res)=>{
-    res.sendFile(path.resolve(__dirname,'../build','index.html'))
-})
+// app.get("*",(req,res)=>{
+//     res.sendFile(path.resolve(__dirname,'../build','index.html'))
+// })
 
 
 const delay =(ms)=> new Promise(resolve => setTimeout(resolve,ms))
 
-const job = schedule.scheduleJob('0 2 * * 0',async ()=>{
-    if(fs.access('./pdf2json')){
-        await FileLoad.loadFromPDF()
-        .then(async (data)=>{
-           await delay(5000)
-           await FileLoad.callAction(data)
-        })
-    }else{
-        return
-    }
+const job = schedule.scheduleJob('38 10 * * 3',async ()=>{
+    fs.access('./pdf2json',fs.constants.F_OK,async(err)=>{
+        if(err) throw new Error()
+            await FileLoad.loadFromPDF()
+            .then(async (data)=>{
+               await delay(5000)
+               await FileLoad.callAction(data)
+            })
+    })
+    // if(fs.access('./pdf2json')){
+    //     await FileLoad.loadFromPDF()
+    //     .then(async (data)=>{
+    //        await delay(5000)
+    //        await FileLoad.callAction(data)
+    //     })
+    // }else{
+    //     return
+    // }
 
  })
 
