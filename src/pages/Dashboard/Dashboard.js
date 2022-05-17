@@ -91,9 +91,9 @@ function Dashboard(){
             case 'delete':
                 return (
                     <>
-                        <div>
-                            вы точно хотите удалить?
-                        </div>
+                        <h5>
+                            Вы точно хотите удалить?
+                        </h5>
                         <div >
                             <Button
                                 variant="outlined"
