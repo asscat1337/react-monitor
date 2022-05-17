@@ -31,24 +31,16 @@ app.use('/analytics',analytics)
 
 const delay =(ms)=> new Promise(resolve => setTimeout(resolve,ms))
 
-const job = schedule.scheduleJob('38 10 * * 3',async ()=>{
+const job = schedule.scheduleJob('03 13 * * *',async ()=>{
+    console.log('start')
     fs.access('./pdf2json',fs.constants.F_OK,async(err)=>{
         if(err) throw new Error()
             await FileLoad.loadFromPDF()
             .then(async (data)=>{
-               await delay(5000)
-               await FileLoad.callAction(data)
+               // await delay(5000)
+                await FileLoad.callAction(data)
             })
     })
-    // if(fs.access('./pdf2json')){
-    //     await FileLoad.loadFromPDF()
-    //     .then(async (data)=>{
-    //        await delay(5000)
-    //        await FileLoad.callAction(data)
-    //     })
-    // }else{
-    //     return
-    // }
 
  })
 

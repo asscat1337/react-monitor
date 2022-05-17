@@ -6,11 +6,14 @@ import {Link} from 'react-router-dom'
 import dayjs from "dayjs";
 import {
     actionDeleteFinalComponent,
-    actionDeleteFirstComponent, actionDeleteOther, actionDeleteSick,
+    actionDeleteFirstComponent,
+    actionDeleteOther,
+    actionDeleteSick,
     actionFilterData,
     actionGetData,
     actionGetNotVaccined,
-    actionSearch
+    actionSearch,
+    actionDeleteUser
 } from "../../store/actions/actionDashboard";
 import NotVaccineDataGrid from "../../components/DataGrid/NotVaccineDataGrid/NotVaccineDataGrid";
 import СustomModal from "../../components/Modal/Modal";
@@ -29,6 +32,7 @@ function Dashboard(){
     const [modalValue,setModalValue] = useState('')
     const [search,setSearch] = useState('')
     const [searchText,setSearchText] = useState('')
+    const [deleteUser,setDeleteUser] = useState({})
     const debounceSearch = useDebounce(search,1000)
 
     const dispatch = useDispatch()
@@ -73,6 +77,10 @@ function Dashboard(){
     const onDeleteOther=()=>{
         dispatch(actionDeleteOther(findUser))
     }
+    const onDeleteDashboard=()=>{
+       dispatch(actionDeleteUser(deleteUser))
+        setOpen(false)
+    }
 
     const getModal=()=>{
         switch (modalValue){
@@ -80,6 +88,28 @@ function Dashboard(){
                 return <FormVaccine
                             currentId={currentId}
                         />
+            case 'delete':
+                return (
+                    <>
+                        <div>
+                            вы точно хотите удалить?
+                        </div>
+                        <div >
+                            <Button
+                                variant="outlined"
+                                onClick={onDeleteDashboard}
+                            >
+                                Удалить
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                onClick={()=>setOpen(false)}
+                            >
+                                Закрыть
+                            </Button>
+                        </div>
+                    </>
+                )
             case 'info' :
                 return <div>
                     {findUser.length ? (
@@ -87,6 +117,7 @@ function Dashboard(){
                             <h3>Информация о сотруднике</h3>
                             <div>ФИО:{findUser[0].fio}</div>
                             <div>СНИЛС:{findUser[0].snils}</div>
+                            <div>Текущий статус:{findUser[0].status}</div>
                             <div>Дата рождения:{dayjs(findUser[0].birthday).format('DD-MM-YYYY')}</div>
                                 <React.Fragment>
                                     {findUser[0].vaccine?.componentName &&
@@ -224,6 +255,7 @@ function Dashboard(){
                         setCurrentId={setCurrentId}
                         rowsCount={rowsCountAll}
                         onFilterData={onFilterData}
+                        setDeleteUser={setDeleteUser}
                         size={size}
                         page={page}
                     />
@@ -239,6 +271,7 @@ function Dashboard(){
                             rowsCount={rowsCountNotVaccine}
                             size={10}
                             page={page}
+                            setDeleteUser={setDeleteUser}
                             onFilterData={onFilterData}
                         />):
                         <div>Нет данных</div>

@@ -15,7 +15,7 @@ import {
     deleteOtherDate,
     deleteFinalComponent,
     deleteFirstComponent,
-    addOneComponent
+    addOneComponent, deleteDashboard
 } from "../reducers/dashboardReducer";
 import axios from "axios";
 import $api from "../../components/http/http";
@@ -169,6 +169,17 @@ function actionAddOneComponent(payload){
             .catch(error=>console.log(error))
     }
 }
+function actionDeleteUser(payload){
+    return dispatch=>{
+        axios.delete(`${process.env.REACT_APP_BASE_URL}/dashboard/delete-dashboard`,{
+            params:{
+                user:payload.id
+            }
+        })
+            .then(()=>dispatch(deleteDashboard(payload.id)))
+            .catch(error=>console.log(error))
+    }
+}
 
 
 export {
@@ -189,5 +200,6 @@ export {
     actionDeleteSick,
     actionDeleteFinalComponent,
     actionDeleteOther,
-    actionAddOneComponent
+    actionAddOneComponent,
+    actionDeleteUser
 }

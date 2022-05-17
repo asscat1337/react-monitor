@@ -3,12 +3,22 @@ import {DataGrid, getGridStringOperators, ruRU} from "@mui/x-data-grid";
 import {Button} from "@mui/material";
 import {useSelector} from "react-redux";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import {Delete} from "@mui/icons-material";
 import CustomGridToolBar from "../../GridToolBar/GridToolbar";
 
 
 
 
-function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setModalValue,onChangePage,onFilterData}){
+function NotVaccineDataGrid({rows = [],
+                                rowsCount,
+                                size,
+                                setOpen,
+                                setCurrentId,
+                                setModalValue,
+                                onChangePage,
+                                onFilterData,
+                                setDeleteUser
+}){
     const loading = useSelector(state=>state.dashboard.loading)
 
     const onClickData=(event,data)=>{
@@ -33,7 +43,12 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setMo
         setCurrentId(params.id)
     }
 
-
+    const onDeleteDashboard=(event,params)=>{
+        event.stopPropagation()
+        setModalValue('delete')
+        setOpen(true)
+        setDeleteUser(params)
+    }
 
     const columns = [
         { field: 'fio', headerName: 'ФИО',width:250},
@@ -61,7 +76,7 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setMo
             field:'action',
             headerName:'Действия',
             sortable:false,
-            width:450,
+            width:500,
             disableClickEventBubbling:true,
             renderCell:(params)=>{
                 return (
@@ -73,10 +88,19 @@ function NotVaccineDataGrid({rows = [],rowsCount,size,setOpen,setCurrentId,setMo
                             Добавить болезнь
                         </Button>
                         <Button
-                            aria-label="Иформация"
+                            aria-label="Информация"
                             onClick={(event)=>onClickInfo(event,params)}
                             endIcon={
                                 <InfoOutlinedIcon/>
+                            }
+                        />
+                        <Button
+                            aria-label="Удалить"
+                            onClick={(event)=>onDeleteDashboard(event,params)}
+                            endIcon={
+                                <Delete
+                                    color="error"
+                                />
                             }
                         />
                     </>

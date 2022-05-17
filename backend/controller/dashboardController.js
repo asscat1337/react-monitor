@@ -90,6 +90,7 @@ class DashboardController {
                     id:item.dashboard_id,
                     department:item.department.title,
                     birthday:item.birthday,
+                    status:item.status,
                     snils:item.snils,
                     isFirstComponent:item.isFirstComponent,
                     vaccine:item.vaccine
@@ -352,7 +353,6 @@ class DashboardController {
              }
              return acc
          },[])
-
           await delay(10000)
 
           await FileLoad.callAction(filteredData)
@@ -815,6 +815,22 @@ class DashboardController {
             console.log(e)
         }
 
+    }
+    async deleteDashboard(req,res,next){
+        try{
+           const {user} = req.query
+
+            await Dashboard.destroy({
+                where:{
+                    dashboard_id:user
+                }
+            })
+
+            return res.status(200).json({message:'Запись удалена'})
+
+        }catch (e) {
+            return res.status(500).json(e)
+        }
     }
 
 }

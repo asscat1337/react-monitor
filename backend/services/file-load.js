@@ -26,7 +26,6 @@ class FileLoad{
                     td.forEach(item=>{
                         const tr = item.querySelectorAll('td')
                         const findDepartmentId = findDepartment.find(item=>item.title === tr[0].textContent)
-                        console.log(findDepartmentId)
                         results.push({
                             fio:tr[1].textContent,
                             departmentId:findDepartmentId?.department_id,
@@ -98,12 +97,34 @@ class FileLoad{
     }
 
    async callAction(newData){
-       for await (const data of newData){
-            await this.updateStatus(data)
-            await this.addNewEmployee(data)
-       }
+        await this.deleteUser(newData)
+         for await (const data of newData){
+              await this.updateStatus(data)
+              await this.addNewEmployee(data)
+        }
     }
+    async deleteUser(data){
+        try{
+           const findAllUsers = await Dashboard.findAll({
+               raw:true
+           })
 
+            findAllUsers.map(async (user)=>{
+
+                const findSnils = data.find(item=>item.snils === user.snils)
+
+                if(findSnils === undefined){
+                    await Dashboard.destroy({
+                        where:{
+                            snils:user.snils
+                        }
+                    })
+                }
+            })
+        }catch (e) {
+            return e
+        }
+    }
     async parseFromJson(){
        try{
            const readFile = util.promisify(fs.readFile)
