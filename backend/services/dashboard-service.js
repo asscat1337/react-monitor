@@ -36,7 +36,8 @@ class DashboardService {
             for await (const users of findUserExpires){
                 await Dashboard.update({
                     isVaccined: 0,
-                    isFirstComponent: 0
+                    isFirstComponent: 0,
+                    isSick:0
                 },{
                     where:{
                         snils: users.snils

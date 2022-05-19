@@ -68,6 +68,11 @@ function NotVaccineDataGrid({rows = [],
             field: 'department',
             headerName: 'Отделение',
             width: 300,
+            renderCell:(params)=>{
+              return (
+                  <>{params.row.department.title}</>
+              )
+            },
             filterOperators:getGridStringOperators().filter(
                 operator=>operator.value === 'contains'
             )

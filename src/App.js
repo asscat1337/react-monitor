@@ -3,11 +3,12 @@ import Header from './components/Header/Header'
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Add from './pages/Add/Add'
 import {Routes,Route,useLocation} from 'react-router-dom'
-import PrivateRouter from "./components/router/PrivateRouter";
+// import PrivateRouter from "./components/router/PrivateRouter";
 import Login from "./pages/Login/Login";
 import NotFound from "./pages/NotFound/NotFound";
 import {ThemeProvider,createTheme} from "@mui/material";
 import Context from "./components/context/context";
+const PrivateRouter = React.lazy(()=>import("./components/router/PrivateRouter"))
 
 
 function App() {
@@ -51,10 +52,14 @@ function App() {
                   }
                   <Routes>
                       <Route path="/" element={
-                          <PrivateRouter component={Dashboard}/>
+                          <React.Suspense fallback={<div>Загрузка...</div>}>
+                              <PrivateRouter component={Dashboard}/>
+                          </React.Suspense>
                       }/>
                       <Route path="/add" element={
-                          <PrivateRouter component={Add}/>
+                          <React.Suspense fallback={<div>Загрузка...</div>}>
+                              <PrivateRouter component={Add}/>
+                          </React.Suspense>
                       }/>
                       <Route path="/login" element={<Login/>}/>
                       <Route path="*" element={<NotFound/>}/>

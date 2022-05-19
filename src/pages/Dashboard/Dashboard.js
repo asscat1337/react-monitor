@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {useDispatch,useSelector} from "react-redux";
-import {TabPanel,TabList,TabContext} from "@mui/lab";
+// import {TabPanel,TabList,TabContext} from "@mui/lab";
+import {Autocomplete, TextField} from "@mui/material";
 import {Box, Button, Tab,CssBaseline} from "@mui/material";
 import {Link} from 'react-router-dom'
 import dayjs from "dayjs";
@@ -13,22 +14,29 @@ import {
     actionGetData,
     actionGetNotVaccined,
     actionSearch,
-    actionDeleteUser
+    actionDeleteUser,
+    actionChangeDepartment
 } from "../../store/actions/actionDashboard";
-import NotVaccineDataGrid from "../../components/DataGrid/NotVaccineDataGrid/NotVaccineDataGrid";
 import СustomModal from "../../components/Modal/Modal";
 import FormVaccine from "../../components/Forms/FormAddVaccine/FormVaccine";
 import FormAddSick from "../../components/Forms/FormAddSick/FormAddSick";
 import Search from "../../components/Search/Search";
 import useDebounce from "../../components/hooks/use-debounce";
-import Chart from "../../components/Chart/Chart";
 import {actionGetAnalytic} from "../../store/actions/actionAnalytic";
+const NotVaccineDataGrid = React.lazy(()=>import("../../components/DataGrid/NotVaccineDataGrid/NotVaccineDataGrid"))
+const TabPanel = React.lazy(()=>import('@mui/lab/TabPanel'))
+const TabList = React.lazy(()=>import('@mui/lab/TabList'))
+const TabContext = React.lazy(()=>import('@mui/lab/TabContext'))
+const Chart = React.lazy(()=>import("../../components/Chart/Chart"))
+
 
 
 function Dashboard(){
     const [value,setValue] = useState('1')
     const [open,setOpen] = useState(false)
+    const [changeDepartment,setChangeDepartment] = useState(false)
     const [currentId,setCurrentId] = useState(null)
+    const [newDepartment,setNewDepartment] = useState({})
     const [modalValue,setModalValue] = useState('')
     const [search,setSearch] = useState('')
     const [searchText,setSearchText] = useState('')
@@ -38,6 +46,7 @@ function Dashboard(){
     const dispatch = useDispatch()
     const page = useSelector(state=>state.dashboard.page)
     const size = useSelector(state=>state.dashboard.size)
+    const loading = useSelector(state=>state.dashobard?.loading)
     const rowsCountAll = useSelector(state=>state.dashboard.rowsAll)
     const rowsCountNotVaccine = useSelector(state=>state.dashboard.rowsNotVaccine)
     const rows = useSelector(state=>state.dashboard?.data)
@@ -45,6 +54,7 @@ function Dashboard(){
     const vaccined = useSelector(state=>state.analytic?.vaccine)
     const notVaccined = useSelector(state=>state.analytic?.notVaccine)
     const sick = useSelector(state=>state.analytic?.sick)
+    const departments = useSelector(state=>state.department?.data)
 
     const findUser = [...notVaccine ?? [],...rows ?? []].filter(item=>{
         return item.id === currentId
@@ -80,6 +90,15 @@ function Dashboard(){
     const onDeleteDashboard=()=>{
        dispatch(actionDeleteUser(deleteUser))
         setOpen(false)
+    }
+    const onToggleDepartment=()=>{
+       setChangeDepartment(!changeDepartment)
+    }
+    const onChangeDepartment=()=>{
+       dispatch(actionChangeDepartment({findUser,newDepartment}))
+    }
+    const handleChange=(event,value)=>{
+        setNewDepartment(value)
     }
 
     const getModal=()=>{
@@ -173,6 +192,24 @@ function Dashboard(){
                                             </div>
                                         )
                                     }
+                                    <Button onClick={onToggleDepartment}>
+                                        Изменить отделение
+                                    </Button>
+                                    {changeDepartment && (
+                                        <div>
+                                            <Autocomplete
+                                                renderInput={(params)=>(
+                                                    <TextField {...params}/>
+                                                )}
+                                                getOptionLabel={(option=>option.label)}
+                                                options={departments}
+                                                onChange={handleChange}
+                                            />
+                                            <Button onClick={onChangeDepartment}>
+                                                Изменить отделение
+                                            </Button>
+                                        </div>
+                                    )}
                                 </React.Fragment>
                         </>
                     ):(
@@ -222,6 +259,7 @@ function Dashboard(){
     },[])
 
     return (
+        // <React.Suspense fallback={<div>Загрузка....</div>}>
         <Box sx={{height:400,width:1}}>
             <CssBaseline/>
             {open &&
@@ -237,55 +275,63 @@ function Dashboard(){
                 onChange={setSearch}
                 clearSearch={clearSearch}
             />
-            <TabContext value={value}>
-                <TabList onChange={onChangeTab}>
-                    <Tab label="Общий список" value="1"/>
-                    <Tab label="Должны вакцинироваться" value="2" onClick={onGetData}/>
-                    <Tab label="Аналитика" value="3"  onClick={onGetAnalytics}/>
-                </TabList>
-                <TabPanel value="1">
-                    <Button>
-                        <Link to="/add">Добавить сотрудника</Link>
-                    </Button>
-                    <NotVaccineDataGrid
-                        rows={rows}
-                        onChangePage={page=>onChangePage(page)}
-                        setModalValue={setModalValue}
-                        setOpen={setOpen}
-                        setCurrentId={setCurrentId}
-                        rowsCount={rowsCountAll}
-                        onFilterData={onFilterData}
-                        setDeleteUser={setDeleteUser}
-                        size={size}
-                        page={page}
-                    />
-                </TabPanel>
-                <TabPanel value="2">
-                    {rows?.length ?
-                        (  <NotVaccineDataGrid
-                            onChangePage={page=>onChangePage(page,"not-vaccined")}
-                            setModalValue={setModalValue}
-                            rows={notVaccine}
-                            setOpen={setOpen}
-                            setCurrentId={setCurrentId}
-                            rowsCount={rowsCountNotVaccine}
-                            size={10}
-                            page={page}
-                            setDeleteUser={setDeleteUser}
-                            onFilterData={onFilterData}
-                        />):
-                        <div>Нет данных</div>
-                    }
-                </TabPanel>
-                <TabPanel value="3">
-                    <Chart
-                        vaccine={vaccined}
-                        notVaccine={notVaccined}
-                        sick={sick}
-                    />
-                </TabPanel>
-            </TabContext>
+            {!loading && (
+                <TabContext value={value}>
+                    <TabList onChange={onChangeTab}>
+                        <Tab label="Общий список" value="1"/>
+                        <Tab label="Должны вакцинироваться" value="2" onClick={onGetData}/>
+                        <Tab label="Аналитика" value="3"  onClick={onGetAnalytics}/>
+                    </TabList>
+                    <TabPanel value="1">
+                        <Button>
+                            <Link to="/add">Добавить сотрудника</Link>
+                        </Button>
+                        <React.Suspense fallback={null}>
+                            <NotVaccineDataGrid
+                                rows={rows}
+                                onChangePage={page=>onChangePage(page)}
+                                setModalValue={setModalValue}
+                                setOpen={setOpen}
+                                setCurrentId={setCurrentId}
+                                rowsCount={rowsCountAll}
+                                onFilterData={onFilterData}
+                                setDeleteUser={setDeleteUser}
+                                size={size}
+                                page={page}
+                            />
+                        </React.Suspense>
+                    </TabPanel>
+                    <TabPanel value="2">
+                        <React.Suspense fallback={null}>
+                            {rows?.length ?
+                                (  <NotVaccineDataGrid
+                                    onChangePage={page=>onChangePage(page,"not-vaccined")}
+                                    setModalValue={setModalValue}
+                                    rows={notVaccine}
+                                    setOpen={setOpen}
+                                    setCurrentId={setCurrentId}
+                                    rowsCount={rowsCountNotVaccine}
+                                    size={10}
+                                    page={page}
+                                    setDeleteUser={setDeleteUser}
+                                    onFilterData={onFilterData}
+                                />):
+                                <div>Нет данных</div>
+                            }
+                        </React.Suspense>
+                    </TabPanel>
+                    <TabPanel value="3">
+                        <Chart
+                            vaccine={vaccined}
+                            notVaccine={notVaccined}
+                            sick={sick}
+                        />
+                    </TabPanel>
+                </TabContext>
+            )}
+            )}
         </Box>
+         // </React.Suspense>
     )
 
 }

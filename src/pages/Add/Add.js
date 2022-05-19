@@ -1,10 +1,10 @@
 import React from 'react'
 import {CssBaseline,Container} from "@mui/material";
 import {useSelector,useDispatch} from "react-redux";
-import FormAdd from "../../components/Forms/FormAddEmployee/FormAdd";
 import {actionGetDepartment} from "../../store/actions/actionDepartment";
-import CustomSnackBar from "../../components/SnackBar/CustomSnackBar";
 import Context from '../../components/context/context'
+const CustomSnackBar = React.lazy(()=>import("../../components/SnackBar/CustomSnackBar"))
+const FormAdd = React.lazy(()=>import("../../components/Forms/FormAddEmployee/FormAdd"))
 
 
 function Add(){
@@ -20,20 +20,22 @@ function Add(){
     },[])
 
     return (
-        <>
-            {
-                openSnackBar &&
-                <CustomSnackBar
-                    message={message ?? error}
-                    variant="info"
-                />
-            }
-            <Container maxWidth="sm">
-                <CssBaseline/>
-                <h1>Форма добавления сотрудника</h1>
-                <FormAdd options={options}/>
-            </Container>
-        </>
+        <React.Suspense fallback={<div>Загрузка...</div>}>
+            <>
+                {
+                    openSnackBar &&
+                    <CustomSnackBar
+                        message={message ?? error}
+                        variant="info"
+                    />
+                }
+                <Container maxWidth="sm">
+                    <CssBaseline/>
+                    <h1>Форма добавления сотрудника</h1>
+                    <FormAdd options={options}/>
+                </Container>
+            </>
+        </React.Suspense>
     )
 }
 

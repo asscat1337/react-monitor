@@ -44,7 +44,7 @@ const job = schedule.scheduleJob('03 13 * * *',async ()=>{
 
  })
 
-const job1 = schedule.scheduleJob('00 2 * * *',async()=>{
+const job1 = schedule.scheduleJob('50 14 * * *',async()=>{
     await dashboardService.updateUserWithExpires()
 })
 

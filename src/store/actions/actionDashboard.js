@@ -11,11 +11,12 @@ import {
     sickDate,
     clearMessage,
     otherDate,
-    deleteSickDate,
     deleteOtherDate,
     deleteFinalComponent,
     deleteFirstComponent,
-    addOneComponent, deleteDashboard
+    addOneComponent,
+    deleteDashboard,
+    changeDepartment
 } from "../reducers/dashboardReducer";
 import axios from "axios";
 import $api from "../../components/http/http";
@@ -180,6 +181,17 @@ function actionDeleteUser(payload){
             .catch(error=>console.log(error))
     }
 }
+function actionChangeDepartment({findUser,newDepartment}){
+    return dispatch=>{
+        const {id} = findUser[0]
+        axios.put(`${process.env.REACT_APP_BASE_URL}/dashboard/change-department`,{
+            findUser,
+            newDepartment
+        })
+            .then(()=>dispatch(changeDepartment({id,newDepartment})))
+            .catch(error=>console.log(error))
+    }
+}
 
 
 export {
@@ -201,5 +213,6 @@ export {
     actionDeleteFinalComponent,
     actionDeleteOther,
     actionAddOneComponent,
-    actionDeleteUser
+    actionDeleteUser,
+    actionChangeDepartment
 }

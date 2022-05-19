@@ -64,13 +64,13 @@ class FileLoad{
 
    async updateStatus(data){
        try{
-           const {snils,status} = data
+           const {snils,status,departmentId} = data
            const getUser = await this.findCurrentUser(snils)
 
            if(getUser === null) return
 
-           if(getUser.status !== status){
-               await Dashboard.update({status},{
+           if(getUser.status !== status || getUser.departmentId !== departmentId){
+               await Dashboard.update({status,departmentId},{
                    where:{
                        snils
                    }

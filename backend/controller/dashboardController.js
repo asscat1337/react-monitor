@@ -71,7 +71,7 @@ class DashboardController {
            const data =  await Dashboard.findAndCountAll({
                 include:[
                     {
-                        model:Department,attributes:['title'],
+                        model:Department,attributes:['title','department_id'],
                     },
                     {
                         model:Vaccine
@@ -88,7 +88,7 @@ class DashboardController {
                     position:item.position,
                     isVaccined:item.isVaccined,
                     id:item.dashboard_id,
-                    department:item.department.title,
+                    department:item.department,
                     birthday:item.birthday,
                     status:item.status,
                     snils:item.snils,
@@ -828,6 +828,26 @@ class DashboardController {
 
             return res.status(200).json({message:'Запись удалена'})
 
+        }catch (e) {
+            return res.status(500).json(e)
+        }
+    }
+    async changeDepartment(req,res,next){
+        try{
+            const {findUser,newDepartment} = req.body
+            const {id} = findUser[0]
+
+            await Dashboard.update({
+                departmentId:newDepartment.value
+            },{
+                where:{
+                    dashboard_id:id
+                }
+            })
+
+            return res.status(200).json({
+                message:'Отделение успешно обновлено'
+            })
         }catch (e) {
             return res.status(500).json(e)
         }
