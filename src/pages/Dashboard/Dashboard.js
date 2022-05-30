@@ -291,7 +291,7 @@ function Dashboard(){
                         <Button>
                             <Link to="/add">Добавить сотрудника</Link>
                         </Button>
-                        <React.Suspense fallback={null}>
+                        <React.Suspense fallback={<div>Загрузка...</div>}>
                             <NotVaccineDataGrid
                                 rows={rows}
                                 onChangePage={page=>onChangePage(page)}
@@ -307,7 +307,7 @@ function Dashboard(){
                         </React.Suspense>
                     </TabPanel>
                     <TabPanel value="2">
-                        <React.Suspense fallback={null}>
+                        <React.Suspense fallback={<div>Загрузка...</div>}>
                             {rows?.length ?
                                 (  <NotVaccineDataGrid
                                     onChangePage={page=>onChangePage(page,"not-vaccined")}
@@ -333,7 +333,6 @@ function Dashboard(){
                         />
                     </TabPanel>
                 </TabContext>
-            )}
             )}
         </Box>
          // </React.Suspense>
