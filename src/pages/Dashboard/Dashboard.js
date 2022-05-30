@@ -23,6 +23,7 @@ import FormAddSick from "../../components/Forms/FormAddSick/FormAddSick";
 import Search from "../../components/Search/Search";
 import useDebounce from "../../components/hooks/use-debounce";
 import {actionGetAnalytic} from "../../store/actions/actionAnalytic";
+import {actionGetDepartment} from "../../store/actions/actionDepartment";
 const NotVaccineDataGrid = React.lazy(()=>import("../../components/DataGrid/NotVaccineDataGrid/NotVaccineDataGrid"))
 const TabPanel = React.lazy(()=>import('@mui/lab/TabPanel'))
 const TabList = React.lazy(()=>import('@mui/lab/TabList'))
@@ -71,6 +72,10 @@ function Dashboard(){
             dispatch(actionSearch(debounceSearch))
         }
     },[debounceSearch,searchText])
+
+    React.useEffect(()=>{
+       dispatch(actionGetDepartment())
+    },[])
 
 
     const onDeleteFirstComponent=()=>{
@@ -206,7 +211,7 @@ function Dashboard(){
                                                 onChange={handleChange}
                                             />
                                             <Button onClick={onChangeDepartment}>
-                                                Изменить отделение
+                                                Подтвердить
                                             </Button>
                                         </div>
                                     )}
