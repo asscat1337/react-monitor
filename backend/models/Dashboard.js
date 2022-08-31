@@ -30,6 +30,7 @@ const Dashboard = sequelize.define('dashboard',{
     departmentId:{
         type:DataTypes.INTEGER,
         allowNull:false,
+        defaultValue:0,
         references:{
             model:Department,
             key:'department_id'

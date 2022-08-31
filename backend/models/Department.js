@@ -1,7 +1,5 @@
 const sequelize = require('../core/config')
 const {DataTypes} = require('sequelize')
-const Dashboard = require('../models/Dashboard')
-const Vaccine = require('../models/Vaccine')
 
 
 

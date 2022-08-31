@@ -1,6 +1,5 @@
 import React from 'react'
 import {TextField,Button,Input,Box,Autocomplete} from "@mui/material";
-// import Select from "react-select";
 import {useForm,Controller} from 'react-hook-form'
 import * as yup from 'yup'
 import {yupResolver} from "@hookform/resolvers/yup";
@@ -10,16 +9,17 @@ import TextMaskField from "../../Inputs/InputMask/InputMask";
 import Context from '../../context/context'
 
 
-function FormAdd({options}){
+function FormAdd({options,status}){
 
     const {onOpenSnackBar,openSnackBar} = React.useContext(Context)
     const dispatch = useDispatch()
 
     const schema = yup.object().shape({
         fio:yup.string().required(),
-        department:yup.string(),
+        department:yup.number(),
         snils:yup.string().required(),
-        position:yup.string().required()
+        position:yup.string().required(),
+        status:yup.string()
     })
 
     const {register,handleSubmit,control,reset} = useForm({
@@ -74,9 +74,9 @@ function FormAdd({options}){
                     render={({ field: { onChange, value } }) => (
                         <Autocomplete
                             onChange={(event, item) => {
-                                onChange(item.label);
+                                onChange(item.value);
                             }}
-                            value={value?.label}
+                            value={value?.value}
                             options={options}
                             getOptionLabel={(item) => item.label}
                             renderInput={(params) => (
@@ -91,8 +91,30 @@ function FormAdd({options}){
                         />
                     )}
                 />
-
-
+                <Controller
+                    control={control}
+                    name="status"
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                        <Autocomplete
+                            onChange={(event, item) => {
+                                onChange(item.label);
+                            }}
+                            value={value?.label}
+                            options={status}
+                            getOptionLabel={(item) => item.label}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Текущий статус"
+                                    margin="normal"
+                                    variant="outlined"
+                                    required
+                                />
+                            )}
+                        />
+                    )}
+                />
                 <Button type="submit">
                     Добавить
                 </Button>

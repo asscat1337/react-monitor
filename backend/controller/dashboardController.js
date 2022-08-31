@@ -15,7 +15,7 @@ class DashboardController {
 
     async addDataFromDashboard(req,res,next){
         try{
-            const {fio,department,position,snils} = req.body
+            const {fio,department,position,snils,status} = req.body
 
             const findBySnils = await Dashboard.findOne({
                 where:{
@@ -35,8 +35,8 @@ class DashboardController {
                 isVaccined:0,
                 isFirstComponent:0,
                 isSick:0,
-                status:'Работа',
-                snils
+                status,
+                snils,
             },{
                 raw:true
             })
@@ -55,6 +55,7 @@ class DashboardController {
                        position:findAddedUser.position,
                        isVaccined:findAddedUser.isVaccined,
                        department:findAddedUser.department.title,
+                       status:findAddedUser.status
                    },
                    message:'Пользователь успешно добавлен!'
                })
@@ -432,46 +433,12 @@ class DashboardController {
     }
     async analytics(req,res,next){
         try{
-            const getDataVaccined = await Dashboard.findAll({
-                attributes:
-                    [Sequelize.fn('COUNT', Sequelize.col('isVaccined'))],
-                where:{
-                    [Op.or]:{
-                        isVaccined:1,
-                    }
-                },
-                raw:true,
-                nest:true
-            })
-            const getDataNotVaccined = await Dashboard.findAll({
-                    attributes:
-                        [Sequelize.fn('COUNT', Sequelize.col('isVaccined'))],
-                    where:{
-                        isVaccined:0,
-                        isSick:0
-                    },
-                    raw:true,
-                    nest:true
-                })
+            const {month} = req.query
+            const data = await DashboardService.getAnalytics(month)
 
-            const getDataSick = await Dashboard.findAll({
-                attributes:[
-                    Sequelize.fn('COUNT',Sequelize.col('isSick'))
-                ],
-                where:{
-                    isSick:1
-                },
-                raw:true,
-                nest:true
-            })
+            console.log(data)
 
-
-
-            return res.status(200).json({
-                vaccine:Object.values(getDataVaccined[0])[0],
-                notVaccined:Object.values(getDataNotVaccined[0])[0],
-                sick:Object.values(getDataSick[0])[0]
-            })
+            return res.status(200).json(data)
         }catch(e){
             console.log(e)
             return res.status(500).json({message:e})
@@ -605,6 +572,7 @@ class DashboardController {
                     first_date:item.vaccine.first_date,
                     last_date:item.vaccine.last_date,
                     sick_date:item.vaccine.sick_date,
+                    recommendedDate:dayjs(item.last_date).add(6,'month').toDate(),
                     expired:item.vaccine.expired,
                     other_date:item.vaccine.other_date,
                     vaccine:item.vaccine.componentName
@@ -612,7 +580,7 @@ class DashboardController {
             })
             const Heading = [['ФИО', 'Дата рождения', 'СНИЛС','Должность',
                 'Вакцинирован?','Болел?','Статус','Отделение','Дата первого компонента',
-                'Дата второго компонента','Дата болезни','Дата окончания прививки','Другое','Название вакцины']]
+                'Дата второго компонента','Дата болезни','Дата окончания прививки','Рекоммендованная дата ревакциинации','Другое','Название вакцины']]
             const wb = xlsx.utils.book_new();
             const ws = xlsx.utils.json_to_sheet(mappedData,{origin:'A2',skipHeader:true})
             xlsx.utils.sheet_add_aoa(ws,Heading)
@@ -848,6 +816,18 @@ class DashboardController {
             return res.status(200).json({
                 message:'Отделение успешно обновлено'
             })
+        }catch (e) {
+            return res.status(500).json(e)
+        }
+    }
+    async changeStatusUser(req,res,next){
+        try{
+            const {id,status} = req.body
+            console.log(req.body)
+
+            const data = await DashboardService.updateUserStatus(id,status)
+
+            return res.status(200).json({message:'Статуст успешно изменен'})
         }catch (e) {
             return res.status(500).json(e)
         }

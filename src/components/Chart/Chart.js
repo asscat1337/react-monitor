@@ -1,16 +1,21 @@
 import React from "react";
-import {Container} from "@mui/material";
+import {Button, Container} from "@mui/material";
 import { Pie} from "react-chartjs-2";
 import {Chart,ArcElement,Tooltip,Legend} from "chart.js";
+import {useDispatch} from "react-redux";
+import {actionGetAnalytic, actionGetAnalyticMonth} from "../../store/actions/actionAnalytic";
+import {transformIsNaN} from "../../helpers/transformIsNaN";
 
 const CustomChart = ({vaccine,notVaccine,sick}) => {
+    const dispatch = useDispatch()
     Chart.register(ArcElement,Tooltip,Legend)
-    const percentageNotVaccined = (notVaccine/(vaccine+notVaccine+sick) * 100).toFixed(1)
-    const percentageVaccine = (vaccine/(vaccine+notVaccine+sick) * 100).toFixed(1)
-    const percentageSick = (sick/(vaccine+notVaccine+sick) * 100).toFixed(1)
-    console.log(percentageSick)
+    const percentageNotVaccined = (notVaccine/(vaccine+notVaccine+sick) * 100)
+    const percentageVaccine = (vaccine/(vaccine+notVaccine+sick) * 100)
+    const percentageSick = (sick/(vaccine+notVaccine+sick) * 100)
     const pieChartData = {
-        labels: [`Вакцинирован ${percentageVaccine}%`, `Не вакцинирован ${percentageNotVaccined}%`,`Переболели ${percentageSick}%`],
+        labels: [`Вакцинирован ${transformIsNaN(percentageVaccine)}%`,
+            `Не вакцинирован ${transformIsNaN(percentageNotVaccined)}%`,
+            `Переболели ${transformIsNaN(percentageSick)}%`],
         datasets: [{
             data: [vaccine, notVaccine,sick],
             label: "Список вакцинированных",
@@ -19,8 +24,28 @@ const CustomChart = ({vaccine,notVaccine,sick}) => {
             borderWidth:1
         }],
     };
+
+    const onChangeMonth=(month)=>{
+        dispatch(actionGetAnalyticMonth(month))
+    }
+
+    const getAll=()=>{
+        dispatch(actionGetAnalytic())
+    }
+
     return (
         <Container sx={{width:500,height:500}}>
+            <Button
+                onClick={getAll}
+            >
+                Общий результат
+            </Button>
+            <Button onClick={()=>onChangeMonth(6)}>
+                6 месяцев
+            </Button>
+            <Button onClick={()=>onChangeMonth(12)}>
+                12 месяцев
+            </Button>
             <Pie
                 data={pieChartData}
                 options={{

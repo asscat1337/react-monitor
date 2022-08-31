@@ -2,6 +2,7 @@ import React from 'react'
 import {CssBaseline,Container} from "@mui/material";
 import {useSelector,useDispatch} from "react-redux";
 import {actionGetDepartment} from "../../store/actions/actionDepartment";
+import {asyncGetStatus} from "../../store/actions/actionStatus";
 import Context from '../../components/context/context'
 const CustomSnackBar = React.lazy(()=>import("../../components/SnackBar/CustomSnackBar"))
 const FormAdd = React.lazy(()=>import("../../components/Forms/FormAddEmployee/FormAdd"))
@@ -13,10 +14,12 @@ function Add(){
     const options = useSelector(state=>state.department.data)
     const message = useSelector(state=>state.dashboard.message)
     const error = useSelector(state=>state.dashboard.error)
+    const status = useSelector(state=>state.status.data)
 
 
     React.useEffect(()=>{
-        dispatch(actionGetDepartment())
+           dispatch(actionGetDepartment())
+           dispatch(asyncGetStatus())
     },[])
 
     return (
@@ -32,7 +35,10 @@ function Add(){
                 <Container maxWidth="sm">
                     <CssBaseline/>
                     <h1>Форма добавления сотрудника</h1>
-                    <FormAdd options={options}/>
+                    <FormAdd
+                        options={options}
+                        status={status}
+                    />
                 </Container>
             </>
         </React.Suspense>

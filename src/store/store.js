@@ -7,6 +7,7 @@ import dashboardReducer from './reducers/dashboardReducer'
 import DepartmentReducer from "./reducers/departmentReducer";
 import authReducer from "./reducers/authReducer";
 import analyticReducer from "./reducers/analyticReducer";
+import  status from "./reducers/statusReducer";
 
 const persistConfig= {
     key:'root',
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
     dashboard:dashboardReducer,
     department:DepartmentReducer,
     auth:authReducer,
-    analytic:analyticReducer
+    analytic:analyticReducer,
+    status
 })
 
 const persistedReducer = persistReducer(persistConfig,rootReducer)

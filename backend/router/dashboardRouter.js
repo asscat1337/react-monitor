@@ -27,5 +27,6 @@ router.delete('/delete-other',dashboardController.deleteOtherDate)
 router.post('/one-component',dashboardController.addOneComponent)
 router.delete('/delete-dashboard',dashboardController.deleteDashboard)
 router.put('/change-department',dashboardController.changeDepartment)
+router.put('/change-status',dashboardController.changeStatusUser)
 
 module.exports = router

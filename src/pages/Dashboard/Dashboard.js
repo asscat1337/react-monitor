@@ -1,29 +1,24 @@
 import React, {useState} from 'react'
 import {useDispatch,useSelector} from "react-redux";
-// import {TabPanel,TabList,TabContext} from "@mui/lab";
-import {Autocomplete, TextField} from "@mui/material";
 import {Box, Button, Tab,CssBaseline} from "@mui/material";
 import {Link} from 'react-router-dom'
-import dayjs from "dayjs";
 import {
-    actionDeleteFinalComponent,
-    actionDeleteFirstComponent,
-    actionDeleteOther,
-    actionDeleteSick,
     actionFilterData,
     actionGetData,
     actionGetNotVaccined,
     actionSearch,
     actionDeleteUser,
-    actionChangeDepartment
 } from "../../store/actions/actionDashboard";
 import СustomModal from "../../components/Modal/Modal";
-import FormVaccine from "../../components/Forms/FormAddVaccine/FormVaccine";
-import FormAddSick from "../../components/Forms/FormAddSick/FormAddSick";
 import Search from "../../components/Search/Search";
 import useDebounce from "../../components/hooks/use-debounce";
 import {actionGetAnalytic} from "../../store/actions/actionAnalytic";
 import {actionGetDepartment} from "../../store/actions/actionDepartment";
+import {AddModalBlock} from "../../components/AddModalBlock/AddModalBlock";
+import {ConfirmDelete} from "../../components/ConfirmDelete/ConfirmDelete";
+import {SickBlock} from "../../components/SickBlock/SickBlock";
+import {UserInfo} from "../../components/UserInfo/UserInfo";
+import {asyncGetStatus} from "../../store/actions/actionStatus";
 const NotVaccineDataGrid = React.lazy(()=>import("../../components/DataGrid/NotVaccineDataGrid/NotVaccineDataGrid"))
 const TabPanel = React.lazy(()=>import('@mui/lab/TabPanel'))
 const TabList = React.lazy(()=>import('@mui/lab/TabList'))
@@ -33,11 +28,9 @@ const Chart = React.lazy(()=>import("../../components/Chart/Chart"))
 
 
 function Dashboard(){
-    const [value,setValue] = useState('1')
+    const [value,setValue] = useState("1")
     const [open,setOpen] = useState(false)
-    const [changeDepartment,setChangeDepartment] = useState(false)
     const [currentId,setCurrentId] = useState(null)
-    const [newDepartment,setNewDepartment] = useState({})
     const [modalValue,setModalValue] = useState('')
     const [search,setSearch] = useState('')
     const [searchText,setSearchText] = useState('')
@@ -56,6 +49,7 @@ function Dashboard(){
     const notVaccined = useSelector(state=>state.analytic?.notVaccine)
     const sick = useSelector(state=>state.analytic?.sick)
     const departments = useSelector(state=>state.department?.data)
+    const status = useSelector(state=>state.status?.data)
 
     const findUser = [...notVaccine ?? [],...rows ?? []].filter(item=>{
         return item.id === currentId
@@ -75,161 +69,37 @@ function Dashboard(){
 
     React.useEffect(()=>{
        dispatch(actionGetDepartment())
+
+        if(!status.length){
+            dispatch(asyncGetStatus())
+        }
     },[])
 
-
-    const onDeleteFirstComponent=()=>{
-        dispatch(actionDeleteFirstComponent(findUser))
-    }
-
-    const onDeleteLastComponent=()=>{
-        dispatch(actionDeleteFinalComponent(findUser))
-    }
-
-    const onDeleteSick=()=>{
-        dispatch(actionDeleteSick(findUser))
-    }
-    const onDeleteOther=()=>{
-        dispatch(actionDeleteOther(findUser))
-    }
     const onDeleteDashboard=()=>{
        dispatch(actionDeleteUser(deleteUser))
         setOpen(false)
-    }
-    const onToggleDepartment=()=>{
-       setChangeDepartment(!changeDepartment)
-    }
-    const onChangeDepartment=()=>{
-       dispatch(actionChangeDepartment({findUser,newDepartment}))
-    }
-    const handleChange=(event,value)=>{
-        setNewDepartment(value)
     }
 
     const getModal=()=>{
         switch (modalValue){
             case 'add':
-                return <FormVaccine
-                            currentId={currentId}
-                        />
+              return <AddModalBlock
+                    currentId={currentId}
+               />
             case 'delete':
-                return (
-                    <>
-                        <h5>
-                            Вы точно хотите удалить?
-                        </h5>
-                        <div >
-                            <Button
-                                variant="outlined"
-                                onClick={onDeleteDashboard}
-                            >
-                                Удалить
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                onClick={()=>setOpen(false)}
-                            >
-                                Закрыть
-                            </Button>
-                        </div>
-                    </>
-                )
+                return <ConfirmDelete
+                        onDeleteDashboard={onDeleteDashboard}
+                        closeModal={()=>setOpen(false)}
+                />
             case 'info' :
-                return <div>
-                    {findUser.length ? (
-                        <>
-                            <h3>Информация о сотруднике</h3>
-                            <div>ФИО:{findUser[0].fio}</div>
-                            <div>СНИЛС:{findUser[0].snils}</div>
-                            <div>Текущий статус:{findUser[0].status}</div>
-                            <div>Дата рождения:{dayjs(findUser[0].birthday).format('DD-MM-YYYY')}</div>
-                                <React.Fragment>
-                                    {findUser[0].vaccine?.componentName &&
-                                        <div>
-                                            <span>Название вакцины:{findUser[0]?.vaccine?.componentName}</span>
-                                        </div>
-                                    }
-                                    {findUser[0].vaccine?.first_date &&
-                                        <div>
-                                            <span>
-                                                Дата первого компонента:{dayjs(findUser[0]?.vaccine?.first_date).format('DD-MM-YYYY')}
-                                            </span>
-                                            <Button onClick={onDeleteFirstComponent}>
-                                                Удалить
-                                            </Button>
-                                        </div>
-                                    }
-                                    {
-                                        findUser[0].vaccine?.last_date &&
-                                        (<div>
-                                            <span>
-                                                   Дата второго компонента:{dayjs(findUser[0]?.vaccine.last_date).format('DD-MM-YYYY')}
-                                            </span>
-                                            <Button onClick={onDeleteLastComponent}>
-                                                Удалить
-                                            </Button>
-                                        </div>)
-                                    }
-                                    {
-                                        findUser[0].vaccine?.sick_date &&
-                                        (<div>
-                                            <span> Дата заболевания:{dayjs(findUser[0]?.vaccine.sick_date).format('DD-MM-YYYY')}</span>
-                                            <Button onClick={onDeleteSick}>
-                                                Удалить
-                                            </Button>
-                                        </div>)
-                                    }
-                                    {
-                                        findUser[0].vaccine?.other_date &&
-                                        (<div>
-                                            <span>
-                                                Дата медотвода:{dayjs(findUser[0]?.vaccine.other_date).format('DD-MM-YYYY')}
-                                            </span>
-                                            <Button onClick={onDeleteOther}>
-                                                Удалить
-                                            </Button>
-                                        </div>)
-                                    }
-                                    {
-                                        findUser[0].vaccine?.reason && (
-                                            <div>
-                                                <span>Причина:{findUser[0]?.vaccine.reason}</span>
-                                            </div>
-                                        )
-                                    }
-                                    <Button onClick={onToggleDepartment}>
-                                        Изменить отделение
-                                    </Button>
-                                    {changeDepartment && (
-                                        <div>
-                                            <Autocomplete
-                                                renderInput={(params)=>(
-                                                    <TextField {...params}/>
-                                                )}
-                                                getOptionLabel={(option=>option.label)}
-                                                options={departments}
-                                                onChange={handleChange}
-                                            />
-                                            <Button onClick={onChangeDepartment}>
-                                                Подтвердить
-                                            </Button>
-                                        </div>
-                                    )}
-                                </React.Fragment>
-                        </>
-                    ):(
-                        <h1>Нет данных о пользователе😞</h1>
-                    )}
-                </div>
+               return <UserInfo
+                        findUser={findUser}
+                        departments={departments}
+                        status={status}
+               />
+                return
             case 'sick' :
-                return (
-                    <>
-                        <div>Болезнь</div>
-                           <FormAddSick
-                               currentId={currentId}
-                        />
-                    </>
-                )
+                return <SickBlock currentId={currentId}/>
             default:
                 return null
         }
@@ -283,9 +153,9 @@ function Dashboard(){
             {!loading && (
                 <TabContext value={value}>
                     <TabList onChange={onChangeTab}>
-                        <Tab label="Общий список" value="1"/>
-                        <Tab label="Должны вакцинироваться" value="2" onClick={onGetData}/>
-                        <Tab label="Аналитика" value="3"  onClick={onGetAnalytics}/>
+                        <Tab label="Общий список" value={"1"}/>
+                        <Tab label="Должны вакцинироваться" value={"2"} onClick={onGetData}/>
+                        <Tab label="Аналитика" value={"3"}  onClick={onGetAnalytics}/>
                     </TabList>
                     <TabPanel value="1">
                         <Button>

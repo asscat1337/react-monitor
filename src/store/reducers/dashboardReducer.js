@@ -17,7 +17,8 @@ import {
     DELETE_SICK_DATE,
     ADD_ONE_COMPONENT,
     DELETE_DASHBOARD,
-    CHANGE_DEPARTMENT
+    CHANGE_DEPARTMENT,
+    CHANGE_STATUS
 } from "../types/dashboardTypes";
 
 const initialState = {
@@ -261,6 +262,22 @@ function dashboardReducer(state = initialState,action){
                 })
             }
         }
+        case CHANGE_STATUS:
+            return {
+                ...state,
+                data:state.data.map(item=>{
+                    if(item.id === action.payload.id){
+                        return {
+                            ...item,
+                            status:action.payload.status
+                        }
+                    }
+                    return item
+                }),
+                message:action.payload.message
+            }
+
+
         default:
             return state
     }
@@ -285,6 +302,7 @@ export const deleteOtherDate=(payload)=>({type:DELETE_OTHER,payload})
 export const addOneComponent=(payload)=>({type:ADD_ONE_COMPONENT,payload})
 export const deleteDashboard=(payload)=>({type:DELETE_DASHBOARD,payload})
 export const changeDepartment=(payload)=>({type:CHANGE_DEPARTMENT,payload})
+export const changeStatus=(payload)=>({type:CHANGE_STATUS,payload})
 
 
 export default dashboardReducer

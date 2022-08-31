@@ -9,6 +9,7 @@ const auth = require('./router/authRouter')
 const analytics = require('./router/analyticsRouter')
 const FileLoad = require('./services/file-load')
 const dashboardService = require('./services/dashboard-service')
+const status = require('./router/statusRouter')
 const schedule = require('node-schedule')
 const fs = require('fs')
 
@@ -23,6 +24,7 @@ app.use(express.json())
 app.use('/dashboard',dashboard)
 app.use('/auth',auth)
 app.use('/analytics',analytics)
+app.use('/status',status)
 
 // app.get("*",(req,res)=>{
 //     res.sendFile(path.resolve(__dirname,'../build','index.html'))

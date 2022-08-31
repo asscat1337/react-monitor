@@ -16,7 +16,7 @@ import {
     deleteFirstComponent,
     addOneComponent,
     deleteDashboard,
-    changeDepartment
+    changeDepartment, changeStatus
 } from "../reducers/dashboardReducer";
 import axios from "axios";
 import $api from "../../components/http/http";
@@ -193,6 +193,15 @@ function actionChangeDepartment({findUser,newDepartment}){
     }
 }
 
+function actionChangeStatus(payload){
+    return async (dispatch)=>{
+        console.log(payload)
+        await $api.put('/dashboard/change-status',payload)
+            .then(({data})=>dispatch(changeStatus({...payload,message:data.message})))
+            .catch(error=>console.log(error))
+    }
+}
+
 
 export {
     actionGetData,
@@ -214,5 +223,6 @@ export {
     actionDeleteOther,
     actionAddOneComponent,
     actionDeleteUser,
-    actionChangeDepartment
+    actionChangeDepartment,
+    actionChangeStatus
 }
